@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dx.ss.data.rebate.dal.mapper.SalarySettingMapper">
+  <resultMap id="BaseResultMap" type="com.dx.ss.data.rebate.dal.beans.SalarySetting">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="start" jdbcType="INTEGER" property="start" />
+    <result column="end" jdbcType="INTEGER" property="end" />
+    <result column="percent" jdbcType="DECIMAL" property="percent" />
+    <result column="extra_award" jdbcType="DECIMAL" property="extraAward" />
+    <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
+  </resultMap>
+</mapper>

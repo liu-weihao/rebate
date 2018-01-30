@@ -1,0 +1,32 @@
+server:
+  port: 8100
+  session:
+    # 8小时过期
+    timeout: 28800
+spring:
+  application:
+    name: rebate
+  jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      time-zone: GMT+8
+  datasource:
+      url: jdbc:mysql://127.0.0.1:3306/rebate?useUnicode=true&characterEncoding=UTF8&useSSL=false
+      username: root
+      password: 123456
+      # 使用Hikari数据源
+      type: com.zaxxer.hikari.HikariDataSource
+      driver-class-name: com.mysql.jdbc.Driver
+  mvc:
+    view:
+      prefix: /view/
+      suffix: .jsp
+  thymeleaf:
+    enabled: false
+    cache: false
+logging:
+  level: debug
+  path: ./log
+---
+spring:
+  profiles:
+    active: dev
