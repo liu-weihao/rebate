@@ -1,8 +1,11 @@
 package com.dx.ss.data.rebate.dal.beans;
 
+import com.dx.ss.data.rebate.annotation.Domain;
+
 import java.util.Date;
 import javax.persistence.*;
 
+@Domain
 @Table(name = "user_account")
 public class UserAccount {
     @Id
@@ -13,7 +16,7 @@ public class UserAccount {
     private Integer accountId;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private String userId;
 
     /**
      * main-主号，sub-附号
@@ -63,14 +66,14 @@ public class UserAccount {
     /**
      * @return user_id
      */
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
     /**
      * @param userId
      */
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

@@ -1,5 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -7,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>小返数据 - 后台管理系统</title>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
-    <script language="JavaScript" src="js/jquery.js"></script>
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/md5.js" type="text/javascript"></script>
+    <script src="js/common.js" type="text/javascript"></script>
     <script src="js/cloud.js" type="text/javascript"></script>
 
     <script language="javascript">
@@ -17,6 +18,36 @@
                 $('.loginbox').css({'position': 'absolute', 'left': ($(window).width() - 692) / 2});
             })
         });
+
+        function KeyDown() {
+            if (event.keyCode == 13) {
+                event.returnValue = false;
+                event.cancel = true;
+                doLogin();
+            }
+        }
+
+        function doLogin() {
+            var username = $("#username").val();
+            if (username.length == 0) return;
+
+            var password = $("#password").val();
+            if (password.length == 0) return;
+
+            $.ajax({
+                url: contextPath + "/web/user/login.do",
+                type: "POST",
+                dataType: "json",
+                data: {"username": username, "password": hex_md5(password)},
+                success: function (result) {
+                    if (result.status != SUCCESS) {
+                        alert(result.message);
+                    } else {
+                        window.location.href = contextPath + "/main.html";
+                    }
+                }
+            });
+        }
     </script>
 
 </head>
@@ -35,19 +66,16 @@
 </div>
 
 <div class="loginbody">
-
     <span class="systemlogo"></span>
-
-    <div class="loginbox">
-
-        <ul>
-            <li><input name="" type="text" class="loginuser" value="admin" onclick="JavaScript:this.value=''"/></li>
-            <li><input name="" type="text" class="loginpwd" value="密码" onclick="JavaScript:this.value=''"/></li>
-            <li><input name="" type="button" class="loginbtn" value="登录" onclick="javascript:window.location='main'"/>
-        </ul>
-
-    </div>
-
+    <form id="loginForm">
+        <div class="loginbox">
+            <ul>
+                <li><input id="username" name="username" class="loginuser" value="" placeholder="登录用户名" onkeydown="KeyDown()"/></li>
+                <li><input type="password" id="password" name="password" class="loginpwd" value="" placeholder="登录密码" onkeydown="KeyDown()"/></li>
+                <li><input type="button" class="loginbtn" value="登录" onclick="doLogin()"/>
+            </ul>
+        </div>
+    </form>
 </div>
 
 </body>

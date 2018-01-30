@@ -1,8 +1,11 @@
 package com.dx.ss.data.rebate.dal.beans;
 
+import com.dx.ss.data.rebate.annotation.Domain;
+
 import java.util.Date;
 import javax.persistence.*;
 
+@Domain
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

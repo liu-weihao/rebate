@@ -1,6 +1,8 @@
 package com.dx.ss.data.rebate.controller;
 
+import com.dx.ss.data.rebate.constants.ViewConstants;
 import com.dx.ss.data.rebate.enums.StatusCode;
+import com.dx.ss.data.rebate.helper.ServletHelper;
 import com.dx.ss.data.rebate.service.UserService;
 import com.dx.ss.data.rebate.vo.ResponseObj;
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +34,10 @@ public class UserController {
         if (StringUtils.isBlank(password)) {
             return ResponseObj.fail(StatusCode.PARAM_BLANK, "请输入登录密码");
         }
-        return userService.login(username, password);
+        ResponseObj obj = userService.login(username, password);
+        if (obj.isSuccess()) {
+            ServletHelper.getRequest().getSession().setAttribute(ViewConstants.LOGIN_TICKET_USER, obj.getBody());
+        }
+        return obj;
     }
 }

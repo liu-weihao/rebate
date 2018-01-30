@@ -21,7 +21,7 @@ public class IndexController {
     }
 
 
-    @RequestMapping(value = "/test", produces = { "application/json;charset=UTF-8" }, method = RequestMethod.GET)
+    @RequestMapping(value = "/web/test.web", produces = { "application/json;charset=UTF-8" }, method = RequestMethod.GET)
     public String test(HttpServletRequest request, HttpServletResponse response) {
 
         return "{\"status\": 200, \"body\":{\"pageNum\": 1, \"pageSize\": 10, \"pages\": 13, \"total\":135, \"dataList\":[{\"name\":\"Lily\"},{\"name\":\"小龙\"}]}}";

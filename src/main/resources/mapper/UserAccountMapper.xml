@@ -7,10 +7,28 @@
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="account_id" jdbcType="INTEGER" property="accountId" />
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
   </resultMap>
+
+  <resultMap id="UserAccountModel" type="com.dx.ss.data.rebate.model.UserAccountModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account_id" jdbcType="INTEGER" property="accountId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+  </resultMap>
+
+  <select id="getUserAccountList" parameterType="map" resultMap="UserAccountModel">
+
+    SELECT ua.user_id, ua.account_id, u.username, u.name, u.phone, a.account_name, a.recommend, a.recommend, ua.gmt_create
+    FROM user_account AS ua, user_info AS u, `account` AS a
+    WHERE ua.user_id=u.user_id AND ua.account_id=a.id
+    ORDER BY ua.id DESC
+  </select>
 </mapper>

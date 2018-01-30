@@ -1,8 +1,11 @@
 package com.dx.ss.data.rebate.dal.beans;
 
+import com.dx.ss.data.rebate.annotation.Domain;
+
 import java.util.Date;
 import javax.persistence.*;
 
+@Domain
 @Table(name = "user_info")
 public class UserInfo {
     @Id

@@ -1,9 +1,12 @@
 package com.dx.ss.data.rebate.dal.beans;
 
+import com.dx.ss.data.rebate.annotation.Domain;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 
+@Domain
 @Table(name = "data_record")
 public class DataRecord {
     @Id

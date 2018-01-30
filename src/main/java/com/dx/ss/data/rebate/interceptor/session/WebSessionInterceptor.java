@@ -44,7 +44,7 @@ public class WebSessionInterceptor extends SessionInterceptor {
         PrintWriter writer = null;
         try {
         	writer = response.getWriter();
-            writer.write("<script>alert('登录已过期，请您重新登录');window.top.location='"+request.getContextPath()+"';</script>");
+            writer.write("<script>alert('登录已过期，请您重新登录');window.top.location='/login.html';</script>");
         } catch (Exception e) {
             sessionLog.error("跳转失败", e);
         } finally {

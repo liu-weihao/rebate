@@ -175,10 +175,6 @@ public class ServletHelper {
      * @return
      */
     public static HttpServletRequest getRequest() {
-        try {
-            return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        } catch (Exception e) {
-            return null;
-        }
+        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 }
