@@ -34,3 +34,4 @@ proxy/logs/**
 
 ## temp ##
 proxy/temp/**
+src/main/resources/proxy/logs/**
