@@ -16,10 +16,6 @@ spring:
       # 使用Hikari数据源
       type: com.zaxxer.hikari.HikariDataSource
       driver-class-name: com.mysql.jdbc.Driver
-  mvc:
-    view:
-      prefix: /view/
-      suffix: .jsp
   thymeleaf:
     enabled: false
     cache: false
