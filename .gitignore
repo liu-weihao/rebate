@@ -29,3 +29,8 @@ mvnw*
 
 ## log ##
 logs/**
+log/**
+proxy/logs/**
+
+## temp ##
+proxy/temp/**
