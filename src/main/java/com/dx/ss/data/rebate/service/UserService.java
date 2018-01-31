@@ -12,6 +12,7 @@ import com.dx.ss.data.rebate.utils.RandomUtils;
 import com.dx.ss.data.rebate.vo.ResponseObj;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -58,6 +59,7 @@ public class UserService {
         UserInfo user = new UserInfo();
         BeanUtils.copyProperties(userForm, user);
         user.setUserId(RandomUtils.getPrimaryKey());
+        user.setPassword(DigestUtils.md5Hex(userForm.getPassword()));
         user.setType(10);
         return userMapper.insertSelective(user) == 1;
     }

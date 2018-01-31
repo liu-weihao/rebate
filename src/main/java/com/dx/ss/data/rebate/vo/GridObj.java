@@ -20,4 +20,11 @@ public class GridObj<T> {
         grid.setTotal(pager.getTotal());
         return grid;
     }
+
+    public static <T> GridObj<T> of(List<T> dataList) {
+        GridObj<T> grid = new GridObj<>();
+        grid.setDataList(dataList);
+        grid.setTotal(dataList.size());
+        return grid;
+    }
 }

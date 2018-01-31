@@ -33,12 +33,8 @@ public class RoleInfo {
     @Column(name = "gmt_create")
     private Date gmtCreate;
 
-    private String creator;
-
     @Column(name = "gmt_modify")
     private Date gmtModify;
-
-    private String modifier;
 
     /**
      * @return id
@@ -123,20 +119,6 @@ public class RoleInfo {
     }
 
     /**
-     * @return creator
-     */
-    public String getCreator() {
-        return creator;
-    }
-
-    /**
-     * @param creator
-     */
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    /**
      * @return gmt_modify
      */
     public Date getGmtModify() {
@@ -148,19 +130,5 @@ public class RoleInfo {
      */
     public void setGmtModify(Date gmtModify) {
         this.gmtModify = gmtModify;
-    }
-
-    /**
-     * @return modifier
-     */
-    public String getModifier() {
-        return modifier;
-    }
-
-    /**
-     * @param modifier
-     */
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
     }
 }

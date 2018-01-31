@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge | chrome=1">
     <meta name="renderer" content="webkit">
-    <title>用户列表</title>
+    <title>角色列表</title>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" type="text/css" href="grid/css/GridManager.css">
 </head>
@@ -15,7 +15,7 @@
     <span>位置：</span>
     <ul class="placeul">
         <li><a href="#">首页</a></li>
-        <li><a href="#">用户列表</a></li>
+        <li><a href="#">角色列表</a></li>
     </ul>
 </div>
 
@@ -28,31 +28,15 @@
 <script type="text/javascript" src="js/common.js"></script>
 <script type="text/javascript">
     $("#grid").grid({
-        ajax_url: contextPath + '/web/user/list.web',
+        ajax_url: contextPath + '/web/role/list.web',
         columnData: [{
-            key: 'username',
+            key: 'roleName',
             width: '130px',
-            text: '登录用户名',
-            align: 'center'
+            text: '角色名称'
         }, {
-            key: 'name',
-            text: '员工姓名',
-            align: 'center'
-        }, {
-            key: 'phone',
-            text: '手机号码',
-            align: 'center'
-        }, {
-            key: 'workAge',
-            text: '工龄（年）',
-            align: 'center'
-        }, {
-            key: 'status',
-            text: '状态',
-            align: 'center',
-            template: function (status, rowObject) {
-                return status == 10 ? "正常" : "异常";
-            }
+            key: 'roleCode',
+            width: '130px',
+            text: '角色代码'
         }, {
             key: 'gmtCreate',
             text: '创建时间',
@@ -65,7 +49,8 @@
             text: '操作',
             align: 'center',
             template: function (action, rowObject) {
-                return "<a style=\"color:#337ab7;\" href=\"javascript:;\" onclick=\"testEditFN()\" learnLink-name='" + rowObject.userId + "'>编辑</a>";
+                return "<a style=\"color:#337ab7;\" href=\"javascript:;\" onclick=\"testEditFN()\" learnLink-name='" + rowObject.id + "'>编辑</a> &nbsp;&nbsp;" +
+                    "<a style=\"color:#337ab7;\" href=\"javascript:;\" onclick=\"testEditFN()\" learnLink-name='" + rowObject.id + "'>角色授权</a>";
             }
         }]
     });
