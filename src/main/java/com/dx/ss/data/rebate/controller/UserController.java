@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -49,7 +50,6 @@ public class UserController {
         return GridObj.of((WebPager<UserInfo>)userList);
     }
 
-
     @RequestMapping(value = "/addUser.web", produces = { "application/json;charset=UTF-8" })
     public ResponseObj addUser(@Valid UserForm userForm, BindingResult result) {
         if (result.hasErrors()) {
@@ -59,5 +59,11 @@ public class UserController {
             return ResponseObj.success();
         }
         return ResponseObj.fail();
+    }
+
+    @RequestMapping(value = "/logout.web", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
+    public ResponseObj logout(HttpServletRequest request) {
+        request.getSession().removeAttribute(ViewConstants.LOGIN_TICKET_USER);
+        return ResponseObj.success();
     }
 }

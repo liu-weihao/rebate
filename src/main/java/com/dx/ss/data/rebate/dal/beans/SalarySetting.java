@@ -1,9 +1,12 @@
 package com.dx.ss.data.rebate.dal.beans;
 
+import com.dx.ss.data.rebate.annotation.Domain;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 
+@Domain
 @Table(name = "salary_setting")
 public class SalarySetting {
     @Id
@@ -30,6 +33,11 @@ public class SalarySetting {
      */
     @Column(name = "extra_award")
     private BigDecimal extraAward;
+
+    /**
+     * main-主号，sub-附号
+     */
+    private String type;
 
     /**
      * 是否删除：1-是，0-否
@@ -127,6 +135,14 @@ public class SalarySetting {
      */
     public void setExtraAward(BigDecimal extraAward) {
         this.extraAward = extraAward;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**

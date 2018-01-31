@@ -10,6 +10,7 @@
     <result column="end" jdbcType="INTEGER" property="end" />
     <result column="percent" jdbcType="DECIMAL" property="percent" />
     <result column="extra_award" jdbcType="DECIMAL" property="extraAward" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />

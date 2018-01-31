@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge | chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>微信账户列表</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="grid/css/GridManager.css">
+</head>
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">用户列表</a></li>
+    </ul>
+</div>
+
+<div class="rightinfo">
+    <table id="grid"></table>
+</div>
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="grid/js/GridManager.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+    $("#grid").grid({
+        ajax_url: contextPath + '/web/account/list.web',
+        columnData: [{
+            key: 'accountName',
+            width: '150px',
+            text: '账户名称'
+        }, {
+            key: 'unionName',
+            text: '联盟名称'
+        }, {
+            key: 'recommend',
+            text: '推广位'
+        }, {
+            key: 'gmtCreate',
+            text: '创建时间',
+            align: 'center',
+            template: function (createDate, rowObject) {
+                return new Date(createDate).format('YYYY-MM-DD HH:mm:ss');
+            }
+        }, {
+            key: 'action',
+            text: '操作',
+            align: 'center',
+            template: function (action, rowObject) {
+                return "<a style=\"color:#337ab7;\" href=\"javascript:;\" onclick=\"testEditFN()\" learnLink-name='" + rowObject.userId + "'>编辑</a>";
+            }
+        }]
+    });
+</script>
+</body>
+</html>

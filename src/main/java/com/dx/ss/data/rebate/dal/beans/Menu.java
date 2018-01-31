@@ -1,5 +1,7 @@
 package com.dx.ss.data.rebate.dal.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import javax.persistence.*;
 
@@ -7,6 +9,8 @@ public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    private Integer parentId;
 
     @Column(name = "menu_name")
     private String menuName;
@@ -19,6 +23,7 @@ public class Menu {
      * 是否删除：1-是，0-否
      */
     @Column(name = "is_deleted")
+    @JsonIgnore
     private Boolean isDeleted;
 
     @Column(name = "gmt_create")
@@ -39,6 +44,14 @@ public class Menu {
      */
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 
     /**

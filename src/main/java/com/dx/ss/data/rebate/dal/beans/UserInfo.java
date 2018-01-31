@@ -1,6 +1,7 @@
 package com.dx.ss.data.rebate.dal.beans;
 
 import com.dx.ss.data.rebate.annotation.Domain;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
 import javax.persistence.*;
@@ -41,6 +42,7 @@ public class UserInfo {
     /**
      * 密码
      */
+    @JsonIgnore
     private String password;
 
     /**

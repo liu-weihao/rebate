@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge | chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>工资设置</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">工资设置</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+
+    <form id="salary">
+        <div class="formtitle"><span>设置信息</span></div>
+
+        <ul class="forminfo">
+            <li>
+                <label>工资区间</label>
+                <input name="start" class="dfinput" value="0" style="width: 120px;" onkeyup="this.value=this.value.replace(/[^0-9.]/ig, '')"/>
+                ~
+                <input name="end" class="dfinput" style="width: 120px;" onkeyup="this.value=this.value.replace(/[^0-9.]/ig, '')"/>
+                <i>万</i>
+            </li>
+            <li><label>提成比例</label><input name="percent" class="dfinput" style="width: 120px;"/><i>%</i></li>
+            <li><label>附加奖励</label><input name="extraAward" value="" class="dfinput" style="width: 120px;"/></li>
+            <li><label>账号类型</label><cite><input name="type" type="radio" value="main" checked="checked"/>主号&nbsp;&nbsp;&nbsp;&nbsp;<input name="type" type="radio" value="sub"/>附加号</cite></li>
+            <li><label>&nbsp;</label><input type="button" class="btn" value="确认保存" onclick="addSalary()"/></li>
+        </ul>
+    </form>
+</div>
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+    function addSalary() {
+        $.ajax({
+            url: contextPath + "/web/salary/saveSalarySetting.web",
+            type: "POST",
+            data: $("#salary").serialize(),
+            success: function (result) {
+                if (result.status != SUCCESS) {
+                    alert(result.message);
+                } else {
+                    alert("添加成功");
+                    $("form")[0].reset();
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

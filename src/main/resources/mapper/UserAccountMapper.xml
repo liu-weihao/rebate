@@ -17,6 +17,9 @@
   <resultMap id="UserAccountModel" type="com.dx.ss.data.rebate.model.UserAccountModel">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="account_id" jdbcType="INTEGER" property="accountId" />
+    <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+    <result column="union_name" jdbcType="VARCHAR" property="unionName" />
+    <result column="recommend" jdbcType="VARCHAR" property="recommend" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
@@ -25,10 +28,11 @@
   </resultMap>
 
   <select id="getUserAccountList" parameterType="map" resultMap="UserAccountModel">
-
-    SELECT ua.user_id, ua.account_id, u.username, u.name, u.phone, a.account_name, a.recommend, a.recommend, ua.gmt_create
-    FROM user_account AS ua, user_info AS u, `account` AS a
-    WHERE ua.user_id=u.user_id AND ua.account_id=a.id
+    SELECT ua.id, ua.user_id, ua.account_id, u.username, u.name, u.phone,
+      a.account_name, a.union_name, a.recommend, a.recommend, ua.gmt_create
+    FROM user_account AS ua
+    LEFT JOIN user_info AS u ON ua.user_id=u.user_id
+    LEFT JOIN `account` AS a ON ua.account_id=a.id
     ORDER BY ua.id DESC
   </select>
 </mapper>

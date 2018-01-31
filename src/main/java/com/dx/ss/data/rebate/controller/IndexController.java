@@ -15,8 +15,9 @@ public class IndexController {
         return "login";
     }
 
-    @RequestMapping(value = "/main")
+    @RequestMapping(value = "/index")
     public String toIndex(HttpServletRequest request, HttpServletResponse response) {
+
         return "main";
     }
 

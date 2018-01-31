@@ -66,11 +66,10 @@ function getBasePath() {
 function createGrid(options) {
 
     var _default = {
-        elem: 'grid',
+        height: "680px",
         gridManagerName: 'grid_manager',
         supportRemind: false,
         disableCache: false,
-        height: '300px',
         supportAjaxPage: true,
         supportSorting: false,
         supportDrag: false,

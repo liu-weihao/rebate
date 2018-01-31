@@ -11,6 +11,18 @@ public class UserAccountModel {
 
     private Integer accountId;
 
+    private String accountName;
+
+    /**
+     * 联盟名称
+     */
+    private String unionName;
+
+    /**
+     * 推广位
+     */
+    private String recommend;
+
     private String userId;
 
     /**

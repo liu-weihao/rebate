@@ -7,6 +7,7 @@ import com.dx.ss.data.rebate.dal.mapper.AccountMapper;
 import com.dx.ss.data.rebate.dal.mapper.UserAccountMapper;
 import com.dx.ss.data.rebate.factory.PagerFactory;
 import com.dx.ss.data.rebate.form.AccountForm;
+import com.dx.ss.data.rebate.model.UserAccountModel;
 import com.dx.ss.data.rebate.pager.BasePager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -52,11 +53,11 @@ public class AccountService {
 
     public BasePager<Account> getAccountList(AccountSearch search) {
         Example ex = new Example(Account.class);
-        PageHelper.startPage(search.getPageNum(), search.getPageSize(), "gmt_create DESC");
+        PageHelper.startPage(search.getCPage(), search.getPSize(), "gmt_create DESC");
         return webPagerFactory.generatePager((Page<Account>) accountMapper.selectByExample(ex));
     }
 
-    public List<UserAccountMapper> getUserAccountList(Integer pageNum, Integer pageSize) {
+    public List<UserAccountModel> getUserAccountList(Integer pageNum, Integer pageSize) {
 
         PageHelper.startPage(pageNum, pageSize);
         return userAccountMapper.getUserAccountList();
