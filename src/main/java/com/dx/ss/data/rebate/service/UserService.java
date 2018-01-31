@@ -82,7 +82,7 @@ public class UserService {
         if (StringUtils.isNotBlank(search.getPhone())) {
             criteria.andEqualTo("phone", search.getPhone());
         }
-        PageHelper.startPage(search.getPageNum(), search.getPageSize(), "gmt_create DESC");
+        PageHelper.startPage(search.getCPage(), search.getPSize(), "gmt_create DESC");
         return webPagerFactory.generatePager((Page<UserInfo>) userMapper.selectByExample(ex));
     }
 

@@ -122,4 +122,8 @@
             }
         });
     };
+    $.laygrid.doPage = function (params) {
+
+    }
+
 })(jQuery);

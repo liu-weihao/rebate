@@ -24,6 +24,16 @@ public class PageableCondition extends BaseCondition {
     private Integer pageSize = 15;
 
     /**
+     * 后台系统分页插件传入的分页参数-相当于pageSize
+     */
+    private Integer pSize = 15;
+
+    /**
+     * 后台系统分页插件传入的分页参数-相当于page
+     */
+    private Integer cPage = 1;
+
+    /**
      * 跳转至指定页码
      */
     private Integer skip = 1;

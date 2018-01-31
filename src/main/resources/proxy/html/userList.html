@@ -1,47 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>网站后台管理系统HTML模板--模板之家 www.cssmoban.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge | chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>用户列表</title>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/grid.js"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $(".click").click(function () {
-                $(".tip").fadeIn(200);
-            });
-
-            $(".tiptop a").click(function () {
-                $(".tip").fadeOut(200);
-            });
-
-            $(".sure").click(function () {
-                $(".tip").fadeOut(100);
-            });
-
-            $(".cancel").click(function () {
-                $(".tip").fadeOut(100);
-            });
-            $.laygrid({
-                target: "#grid",
-                url: "http://127.0.0.1/test",
-                columns: [{display: "姓名", name: 'name'}],
-                usePager: true,
-                page: {
-                    cont: 'page',
-                    groups: 10
-                }
-            });
-        });
-    </script>
-
-
+    <link rel="stylesheet" type="text/css" href="grid/css/GridManager.css">
 </head>
-
-
 <body>
 
 <div class="place">
@@ -54,36 +21,57 @@
 </div>
 
 <div class="rightinfo">
-    <div class="tools">
-        <ul class="toolbar">
-            <li class="click"><span><img src="images/t01.png"/></span>添加</li>
-            <li class="click"><span><img src="images/t02.png"/></span>修改</li>
-            <li><span><img src="images/t03.png"/></span>删除</li>
-            <li><span><img src="images/t04.png"/></span>统计</li>
-        </ul>
-        <ul class="toolbar1">
-            <li><span><img src="images/t05.png"/></span>设置</li>
-        </ul>
-    </div>
-
-    <div id="grid"></div>
-
-    <div class="tip">
-        <div class="tiptop"><span>提示信息</span><a></a></div>
-
-        <div class="tipinfo">
-            <span><img src="images/ticon.png"/></span>
-            <div class="tipright">
-                <p>是否确认对信息的修改 ？</p>
-                <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
-            </div>
-        </div>
-
-        <div class="tipbtn">
-            <input name="" type="button" class="sure" value="确定"/>&nbsp;
-            <input name="" type="button" class="cancel" value="取消"/>
-        </div>
-    </div>
+    <table id="grid"></table>
 </div>
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="grid/js/GridManager.js"></script>
+<script type="text/javascript">
+    var grid = $("#grid").grid({
+        ajax_url: contextPath + '/web/user/list.web',
+        columnData: [{
+            key: 'username',
+            width: '130px',
+            text: '登录用户名',
+            align: 'center'
+        }, {
+            key: 'name',
+            text: '员工姓名',
+            align: 'center'
+        }, {
+            key: 'phone',
+            text: '手机号码',
+            align: 'center'
+        }, {
+            key: 'workAge',
+            text: '工龄（年）',
+            align: 'center'
+        }, {
+            key: 'status',
+            text: '状态',
+            align: 'center',
+            template: function (status, rowObject) {
+                return status == 10 ? "正常" : "异常";
+            }
+        }, {
+            key: 'gmtCreate',
+            text: '创建时间',
+            align: 'center',
+            template: function (createDate, rowObject) {
+                return new Date(createDate).format('YYYY-MM-DD HH:mm:ss');
+            }
+        }, {
+            key: 'action',
+            text: '操作',
+            align: 'center',
+            template: function (action, rowObject) {
+                return "<a style=\"color:#337ab7;\" href=\"javascript:;\" onclick=\"testEditFN()\" learnLink-name='" + rowObject.userId + "'>编辑</a>";
+            }
+        }]
+    });
+    console.log(grid);
+
+</script>
 </body>
 </html>
