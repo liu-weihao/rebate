@@ -31,6 +31,12 @@ public class AccountController extends BaseController {
         return GridObj.of((WebPager<UserAccountModel>) accountList);
     }
 
+    @RequestMapping(value = "/getAccountByUser.web", produces = {"application/json;charset=UTF-8"})
+    public ResponseObj getAccountByUser(String userId) {
+
+        return ResponseObj.success(accountService.getAccountByUser(userId));
+    }
+
     @RequestMapping(value = "/saveAccount.web", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
     public ResponseObj saveAccount(@Valid AccountForm accountForm, BindingResult result) {
         if (result.hasErrors()) {

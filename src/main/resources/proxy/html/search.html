@@ -7,6 +7,7 @@
     <meta name="renderer" content="webkit">
     <title>数据查看</title>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="css/select.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div class="formbody">
@@ -17,7 +18,20 @@
                 <input id="start" name="startTime" class="dfinput"/> ~ <input id="end" name="endTime" class="dfinput"/>
             </li>
             <li>
-                <label>选择查看对象</label><input id="account" name="account" class="dfinput"/>
+                <label>用户</label>
+                <div class="vocation">
+                    <select id="user" name="userId">
+                        <option value="">--请选择--</option>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label>微信账号</label>
+                <div class="vocation">
+                    <select id="account" name="accountId">
+                        <option value="">--请选择--</option>
+                    </select>
+                </div>
             </li>
             <li><label>&nbsp;</label><input type="button" class="scbtn" value="查询" onclick="doSearch()"/></li>
         </ul>
@@ -26,7 +40,6 @@
 <div id="main" style="width: 600px;height:400px;"></div>
 
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/jquery.idTabs.min.js"></script>
 <script type="text/javascript" src="js/select-ui.min.js"></script>
 <script type="text/javascript" src="js/echarts.min.js"></script>
 <script type="text/javascript" src="laydate/laydate.js"></script>
@@ -45,6 +58,17 @@
             showBottom: false,
             theme: 'grid',
             max: new Date().format('YYYY-MM-DD')
+        });
+        userList();
+        $("#user").uedSelect({
+            width : 100
+        });
+        $("#account").uedSelect({
+            width : 135
+        });
+        $("#user").change(function () {
+            var userId = $(this).val();
+            accountList(userId);
         });
     });
 
@@ -116,7 +140,46 @@
     };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
-    
+
+    function userList() {
+        $.ajax({
+            url: contextPath + "/web/user/all.web",
+            type: "GET",
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var userList = result.body;
+                    var select = $("#user");
+                    for (var i = 0 ; i < userList.length ; i++) {
+                        var op = $("<option></option>");
+                        op.attr("value", userList[i].userId);
+                        op.html(userList[i].name);
+                        select.append(op);
+                    }
+                }
+            }
+        });
+    }
+    function accountList(userId) {
+        $.ajax({
+            url: contextPath + "/web/account/getAccountByUser.web",
+            type: "GET",
+            data: {"userId": userId},
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var accountList = result.body;
+                    var select = $("#account");
+                    select.remove(":not(:eq(0))");
+                    for (var i = 0 ; i < accountList.length ; i++) {
+                        var op = $("<option></option>");
+                        op.attr("value", accountList[i].id);
+                        op.html(accountList[i].accountName);
+                        select.append(op);
+                    }
+                }
+            }
+        });
+    }
+
     function doSearch() {
 
     }

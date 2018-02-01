@@ -12,11 +12,16 @@ import com.dx.ss.data.rebate.model.UserAccountModel;
 import com.dx.ss.data.rebate.pager.BasePager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AccountService {
@@ -68,10 +73,22 @@ public class AccountService {
         return webPagerFactory.generatePager((Page<UserAccountModel>) userAccountMapper.getUserAccountList());
     }
 
+    public List<Account> getAccountByUser(String userId) {
+        Example example = new Example(UserAccount.class);
+        example.createCriteria().andEqualTo("userId", userId);
+        List<UserAccount> userAccounts = userAccountMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(userAccounts)) return Lists.newArrayList();
+        List<Integer> accountIds = new ArrayList<>(userAccounts.size());
+        userAccounts.forEach(userAccount -> accountIds.add(userAccount.getAccountId()));
+        Example ex = new Example(Account.class);
+        ex.createCriteria().andIn("id", accountIds);
+        return accountMapper.selectByExample(ex);
+    }
+
     public boolean changeAccountUser(Integer id, String userId, Integer accountId) {
-        if(id == null || accountId == null || StringUtils.isBlank(userId)) return false;
+        if (id == null || accountId == null || StringUtils.isBlank(userId)) return false;
         UserAccount userAccount = userAccountMapper.selectByPrimaryKey(id);
-        if(userAccount == null) return false;
+        if (userAccount == null) return false;
         userAccount.setUserId(userId);
         userAccount.setAccountId(accountId);
         return userAccountMapper.updateByPrimaryKeySelective(userAccount) == 1;
