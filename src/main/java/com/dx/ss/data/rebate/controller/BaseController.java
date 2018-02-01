@@ -33,7 +33,7 @@ public class BaseController {
      * @param request
      * @return
      */
-    public static String userId(HttpServletRequest request){
+    public String userId(HttpServletRequest request){
         SessionUser sessionUser = getSessionUser(request);
         if(sessionUser != null){
             return sessionUser.getUserId();
@@ -50,7 +50,7 @@ public class BaseController {
      * @param request
      * @return
      */
-    public static String username(HttpServletRequest request){
+    public String username(HttpServletRequest request){
         SessionUser sessionUser = getSessionUser(request);
         if(sessionUser != null){
             return sessionUser.getUsername();
@@ -67,7 +67,7 @@ public class BaseController {
      * @param request
      * @return
      */
-    public static Date loginTime(HttpServletRequest request){
+    public Date loginTime(HttpServletRequest request){
         SessionUser sessionUser = getSessionUser(request);
         if(sessionUser != null){
             return sessionUser.getLoginTime();
@@ -82,7 +82,7 @@ public class BaseController {
      * @param request
      * @return
      */
-    public static Integer userType(HttpServletRequest request){
+    public Integer userType(HttpServletRequest request){
         SessionUser sessionUser = getSessionUser(request);
         if(sessionUser != null){
             return sessionUser.getType();
@@ -90,11 +90,11 @@ public class BaseController {
         return null;
     }
 
-    public static void destory(HttpServletRequest request){
+    public void destory(HttpServletRequest request){
         request.getSession().setAttribute(ViewConstants.LOGIN_TICKET_USER, null);
     }
 
-    private static SessionUser getSessionUser(HttpServletRequest request){
+    private SessionUser getSessionUser(HttpServletRequest request){
         Object obj = request.getSession().getAttribute(ViewConstants.LOGIN_TICKET_USER);
         if(obj != null){	//已登录
             return (SessionUser) obj;

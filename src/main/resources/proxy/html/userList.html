@@ -23,52 +23,124 @@
     <table id="grid"></table>
 </div>
 
+<div class="tip">
+    <div class="tiptop"><span>用户信息</span><a></a></div>
+    <div class="tipinfo">
+        <div class="formbody">
+            <form id="user">
+                <input id="userId" name="userId" type="hidden" value=""/>
+                <ul class="forminfo">
+                    <li><label>真实姓名</label><input id="name" name="name" class="dfinput"/></li>
+                    <li><label>手机号码</label><input id="phone" name="phone" value="" class="dfinput" onkeyup="this.value=this.value.replace(/[^0-9]/ig, '')"/></li>
+                    <li><label>工龄</label><input id="workAge" name="workAge" value="" class="dfinput" onkeyup="this.value=this.value.replace(/[^0-9.]/ig, '')"/><i>年</i></li>
+                    <li><label>&nbsp;</label><input type="button" class="btn" value="确认保存" onclick="editUser()"/></li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="grid/js/GridManager.js"></script>
 <script type="text/javascript" src="js/common.js"></script>
 <script type="text/javascript">
-    $("#grid").grid({
-        ajax_url: contextPath + '/web/user/list.web',
-        columnData: [{
-            key: 'username',
-            width: '130px',
-            text: '登录用户名',
-            align: 'center'
-        }, {
-            key: 'name',
-            text: '员工姓名',
-            align: 'center'
-        }, {
-            key: 'phone',
-            text: '手机号码',
-            align: 'center'
-        }, {
-            key: 'workAge',
-            text: '工龄（年）',
-            align: 'center'
-        }, {
-            key: 'status',
-            text: '状态',
-            align: 'center',
-            template: function (status, rowObject) {
-                return status == 10 ? "正常" : "异常";
-            }
-        }, {
-            key: 'gmtCreate',
-            text: '创建时间',
-            align: 'center',
-            template: function (createDate, rowObject) {
-                return new Date(createDate).format('YYYY-MM-DD HH:mm:ss');
-            }
-        }, {
-            key: 'action',
-            text: '操作',
-            align: 'center',
-            template: function (action, rowObject) {
-                return "<a style=\"color:#337ab7;\" href=\"javascript:;\" onclick=\"testEditFN()\" learnLink-name='" + rowObject.userId + "'>编辑</a>";
-            }
-        }]
+    $(document).ready(function () {
+        $(".tiptop a").click(function(){
+            $(".tip").fadeOut(200);
+        });
+        $("#grid").grid({
+            ajax_url: contextPath + '/web/user/list.web',
+            columnData: [{
+                key: 'username',
+                width: '130px',
+                text: '登录用户名',
+                align: 'center'
+            }, {
+                key: 'name',
+                text: '员工姓名',
+                align: 'center'
+            }, {
+                key: 'phone',
+                text: '手机号码',
+                align: 'center'
+            }, {
+                key: 'workAge',
+                text: '工龄（年）',
+                align: 'center'
+            }, {
+                key: 'status',
+                text: '状态',
+                align: 'center',
+                template: function (status, rowObject) {
+                    if(status == 10) {
+                        return "<a href='javascript:void(0);' onclick=\"changeUserStatus('" + rowObject.userId + "', 20)\">正常</a>";
+                    }
+                    return "<a href='javascript:void(0);' onclick=\"changeUserStatus('" + rowObject.userId + "', 10)\">禁用</a>";
+                }
+            }, {
+                key: 'gmtCreate',
+                text: '创建时间',
+                align: 'center',
+                template: function (createDate, rowObject) {
+                    return new Date(createDate).format('YYYY-MM-DD HH:mm:ss');
+                }
+            }, {
+                key: 'action',
+                text: '操作',
+                align: 'center',
+                template: function (action, rowObject) {
+                    return "<a style='color:#337ab7;' href='javascript:;' onclick='show(" + JSON.stringify(rowObject) + ")'>编辑</a>";
+                }
+            }]
+        });
     });
+
+    function show(user) {
+        $(".tip").fadeIn(200);
+        $("#userId").val(user.userId);
+        $("#name").val(user.name);
+        $("#phone").val(user.phone);
+        $("#workAge").val(user.workAge);
+    }
+
+    function editUser() {
+        $.ajax({
+            url: contextPath + "/web/user/editUser.web",
+            type: "POST",
+            data: $("#user").serialize(),
+            success: function (result) {
+                if (result.status != SUCCESS) {
+                    alert(result.message);
+                } else {
+                    alert("编辑成功");
+                    $("#grid").GM('refreshGrid', false);
+                    $(".tip").fadeOut(100);
+                    $("form")[0].reset();
+                }
+            }
+        });
+    }
+
+    function changeUserStatus(userId, status) {
+        var message = "您确定要将此账号恢复正常吗？";
+        if(status != 10) {
+            message = "您确定要禁用账号吗？";
+        }
+        if(window.confirm(message)) {
+            $.ajax({
+                url: contextPath + "/web/user/changeUserStatus.web",
+                type: "POST",
+                data: {"userId": userId, "status": status},
+                success: function (result) {
+                    if (result.status != SUCCESS) {
+                        alert(result.message);
+                    } else {
+                        $("#grid").GM('refreshGrid', false);
+                    }
+                }
+            });
+        }
+    }
 </script>
 </body>
 </html>

@@ -40,6 +40,10 @@ public class SalaryService {
         }
     }
 
+    public boolean removeSalary(Integer id) {
+        return id != null && id > 0 && salaryMapper.deleteByPrimaryKey(id) == 1;
+    }
+
     public ResponseObj isValid(SalarySetting setting) {
 
         List<SalarySetting> settings = getSalarySettings(setting.getType());

@@ -9,8 +9,14 @@ public class UserAccountModel {
 
     private Integer id;
 
+    /**
+     * 账户id
+     */
     private Integer accountId;
 
+    /**
+     * 账户名称
+     */
     private String accountName;
 
     /**
@@ -23,6 +29,9 @@ public class UserAccountModel {
      */
     private String recommend;
 
+    /**
+     * 用户id
+     */
     private String userId;
 
     /**
@@ -40,6 +49,9 @@ public class UserAccountModel {
      */
     private String phone;
 
+    /**
+     * 员工姓名
+     */
     private String name;
 
 }

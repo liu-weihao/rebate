@@ -15,12 +15,29 @@
     <span>位置：</span>
     <ul class="placeul">
         <li><a href="#">首页</a></li>
-        <li><a href="#">用户列表</a></li>
+        <li><a href="#">微信账户列表</a></li>
     </ul>
 </div>
 
 <div class="rightinfo">
     <table id="grid"></table>
+</div>
+
+<div class="tip">
+    <div class="tiptop"><span>工资设置</span><a></a></div>
+    <div class="tipinfo">
+        <div class="formbody">
+            <form id="account">
+                <input id="sid" name="id" type="hidden" value=""/>
+                <ul class="forminfo">
+                    <li><label>账户名</label><input id="accountName" name="accountName" class="dfinput"/></li>
+                    <li><label>联盟名</label><input id="unionName" name="unionName" value="" class="dfinput"/></li>
+                    <li><label>推广位</label><input id="recommend" name="recommend" value="" class="dfinput"/></li>
+                    <li><label>&nbsp;</label><input type="button" class="btn" value="确认保存" onclick="editAccount()"/></li>
+                </ul>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -51,10 +68,36 @@
             text: '操作',
             align: 'center',
             template: function (action, rowObject) {
-                return "<a style=\"color:#337ab7;\" href=\"javascript:;\" onclick=\"testEditFN()\" learnLink-name='" + rowObject.userId + "'>编辑</a>";
+                return "<a style='color:#337ab7;' href='javascript:;' onclick='show(" + JSON.stringify(rowObject) + ")'>编辑</a>";
             }
         }]
     });
+
+    function show(account) {
+        $(".tip").fadeIn(200);
+        $("#sid").val(account.id);
+        $("#accountName").val(account.accountName);
+        $("#unionName").val(account.unionName);
+        $("#recommend").val(account.recommend);
+    }
+
+    function editAccount() {
+        $.ajax({
+            url: contextPath + "/web/account/saveAccount.web",
+            type: "POST",
+            data: $("#account").serialize(),
+            success: function (result) {
+                if (result.status != SUCCESS) {
+                    alert(result.message);
+                } else {
+                    alert("编辑成功");
+                    $("#grid").GM('refreshGrid', false);
+                    $(".tip").fadeOut(100);
+                    $("form")[0].reset();
+                }
+            }
+        });
+    }
 </script>
 </body>
 </html>

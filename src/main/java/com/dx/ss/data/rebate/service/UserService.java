@@ -55,6 +55,11 @@ public class UserService {
         return ResponseObj.success(sessionUser);
     }
 
+    public UserInfo getUserInfo(String userId) {
+        if (StringUtils.isBlank(userId)) return null;
+        return userMapper.selectByPrimaryKey(userId);
+    }
+
     public boolean addUserInfo(UserForm userForm) {
         UserInfo user = new UserInfo();
         BeanUtils.copyProperties(userForm, user);
@@ -69,8 +74,10 @@ public class UserService {
         UserInfo user = userMapper.selectByPrimaryKey(userId);
         if (user == null) return false;
         user.setName(name);
-        user.setWorkAge(workAge);
         user.setPhone(phone);
+        if (workAge != null) {
+            user.setWorkAge(workAge);
+        }
         userMapper.updateByPrimaryKeySelective(user);
         return true;
     }
@@ -99,7 +106,11 @@ public class UserService {
     public boolean changeUserStatus(String userId, Integer status) {
         if (StringUtils.isBlank(userId) || status == null) return false;
         UserInfo user = userMapper.selectByPrimaryKey(userId);
+
         if (user == null) return false;
+        //超级管理员的状态不能更改
+        if (user.getType().equals(0)) return false;
+
         user.setStatus(status);
         return userMapper.updateByPrimaryKeySelective(user) == 1;
     }

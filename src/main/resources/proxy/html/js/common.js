@@ -21,7 +21,7 @@ var FAILED = 100;
 var SUCCESS = 200;
 
 $.ajaxSetup({
-    error : function(jqXHR, textStatus, errorThrown) {
+    error: function (jqXHR, textStatus, errorThrown) {
         switch (jqXHR.status) {
             case (ERROR):
                 alert("服务器系统内部错误");
@@ -145,16 +145,17 @@ function dateFormatYMD(data) {
         return serializeObj;
     };
 
-    $.fn.grid = function(options) {
+    $.fn.grid = function (options) {
         var _default = {
             gridManagerName: 'grid_manager',
-            supportRemind: false,
-            disableCache: false,
+            supportAjaxPage: true,     //支持分页
+            supportAutoOrder: true,    //添加一列【序号】
+            supportRemind: false,      //列提醒
+            disableCache: false,       //缓存
+            supportCheckbox: false,    //是否显示复选框
+            supportSorting: false,     //是否支持排序
+            supportDrag: false,        //是否支持拖拽
             height: '300px',
-            supportAjaxPage: true,
-            supportSorting: false,
-            supportDrag: false,
-            supportAutoOrder: true,
             ajax_type: 'GET',
             dataKey: 'dataList',
             totalsKey: 'total',
@@ -162,5 +163,5 @@ function dateFormatYMD(data) {
         };
         var _options = $.extend(_default, options);
         return this.GM(_options);
-    }
+    };
 })(jQuery);

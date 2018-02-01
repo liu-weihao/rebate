@@ -6,10 +6,13 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
 public class UserForm {
+
+    private String userId;
 
     @NotBlank(message = "请输入登录用户名")
     private String username;
@@ -18,6 +21,7 @@ public class UserForm {
     private String name;
 
     @NotBlank(message = "请输入手机号码")
+    @Pattern(regexp = "(\\+\\d+)?1[34578]\\d{9}$", message = "手机号码格式不正确")
     private String phone;
 
     @NotNull(message = "请输入工龄")

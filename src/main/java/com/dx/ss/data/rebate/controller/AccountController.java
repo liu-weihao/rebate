@@ -31,12 +31,12 @@ public class AccountController extends BaseController {
         return GridObj.of((WebPager<Account>) accountList);
     }
 
-    @RequestMapping(value = "/addAccount.web", produces = { "application/json;charset=UTF-8" }, method = RequestMethod.POST)
-    public ResponseObj addAccount(@Valid AccountForm accountForm, BindingResult result) {
+    @RequestMapping(value = "/saveAccount.web", produces = { "application/json;charset=UTF-8" }, method = RequestMethod.POST)
+    public ResponseObj saveAccount(@Valid AccountForm accountForm, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseObj.fail(StatusCode.FORM_INVALID, result.getAllErrors().get(0).getDefaultMessage());
         }
-        if(accountService.addAccount(accountForm)) {
+        if(accountService.saveAccountInfo(accountForm)) {
             return ResponseObj.success();
         }
         return ResponseObj.fail();

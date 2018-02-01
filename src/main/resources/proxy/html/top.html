@@ -12,17 +12,40 @@
 <body style="background:url(images/topbg.gif) repeat-x;">
 
 <div class="topleft">
-    <a href="main" target="_parent"><img src="images/logo.png" height="60" title="系统首页"/></a>
+    <a href="main.html" target="_parent"><img src="images/logo.png" height="60" title="系统首页"/></a>
 </div>
 
 <div class="topright">
     <ul>
-        <li class="user"><span><a href="#">admin</a>&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="logout()">退出</a></span></li>
+        <li class="user"><span><a id="username" href="javascript:void(0);" onclick="show();"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="logout()">退出</a></span></li>
     </ul>
 </div>
+
+<div class="rightinfo">
+    <table id="grid"></table>
+</div>
+
 <script src="js/jquery.js" type="text/javascript"></script>
 <script src="js/common.js" type="text/javascript"></script>
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        $.ajax({
+            url: contextPath + "/web/user/info.web",
+            type: "GET",
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var user = result.body;
+                    $("#username").html(user.username);
+                    window.parent['rightFrame'].init(user);
+                }
+            }
+        });
+    });
+
+    function show() {
+        window.parent['rightFrame'].show();
+    }
     function logout() {
         $.ajax({
            url: contextPath + "/web/user/logout.web",

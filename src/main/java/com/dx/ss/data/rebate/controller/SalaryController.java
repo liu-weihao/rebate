@@ -11,6 +11,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -46,5 +48,11 @@ public class SalaryController extends BaseController {
         return ResponseObj.fail();
     }
 
-
+    @RequestMapping(value = "/removeSalary.web", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
+    public ResponseObj removeSalary(@RequestParam(name = "id") Integer id) {
+        if (salaryService.removeSalary(id)) {
+            return ResponseObj.success();
+        }
+        return ResponseObj.fail();
+    }
 }
