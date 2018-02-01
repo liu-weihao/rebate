@@ -7,6 +7,7 @@ import com.dx.ss.data.rebate.dal.mapper.AccountMapper;
 import com.dx.ss.data.rebate.dal.mapper.UserAccountMapper;
 import com.dx.ss.data.rebate.factory.PagerFactory;
 import com.dx.ss.data.rebate.form.AccountForm;
+import com.dx.ss.data.rebate.form.AssignForm;
 import com.dx.ss.data.rebate.model.UserAccountModel;
 import com.dx.ss.data.rebate.pager.BasePager;
 import com.github.pagehelper.Page;
@@ -16,8 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
-
-import java.util.List;
 
 @Service
 public class AccountService {
@@ -51,16 +50,22 @@ public class AccountService {
         }
     }
 
+    public boolean assign(AssignForm assignForm) {
+        UserAccount userAccount = new UserAccount();
+        BeanUtils.copyProperties(assignForm, userAccount);
+        return userAccountMapper.insertSelective(userAccount) == 1;
+    }
+
     public BasePager<Account> getAccountList(AccountSearch search) {
         Example ex = new Example(Account.class);
         PageHelper.startPage(search.getCPage(), search.getPSize(), "gmt_create DESC");
         return webPagerFactory.generatePager((Page<Account>) accountMapper.selectByExample(ex));
     }
 
-    public List<UserAccountModel> getUserAccountList(Integer pageNum, Integer pageSize) {
+    public BasePager<UserAccountModel> getUserAccountList(Integer pageNum, Integer pageSize) {
 
         PageHelper.startPage(pageNum, pageSize);
-        return userAccountMapper.getUserAccountList();
+        return webPagerFactory.generatePager((Page<UserAccountModel>) userAccountMapper.getUserAccountList());
     }
 
     public boolean changeAccountUser(Integer id, String userId, Integer accountId) {

@@ -7,6 +7,7 @@
     <meta name="renderer" content="webkit">
     <title>微信账户列表</title>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="css/select.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="grid/css/GridManager.css">
 </head>
 <body>
@@ -23,12 +24,12 @@
     <table id="grid"></table>
 </div>
 
-<div class="tip">
-    <div class="tiptop"><span>工资设置</span><a></a></div>
+<div id="edit_panel" class="tip">
+    <div class="tiptop"><span>微信账户</span><a></a></div>
     <div class="tipinfo">
         <div class="formbody">
             <form id="account">
-                <input id="sid" name="id" type="hidden" value=""/>
+                <input id="accountId" name="id" type="hidden" value=""/>
                 <ul class="forminfo">
                     <li><label>账户名</label><input id="accountName" name="accountName" class="dfinput"/></li>
                     <li><label>联盟名</label><input id="unionName" name="unionName" value="" class="dfinput"/></li>
@@ -39,48 +40,154 @@
         </div>
     </div>
 </div>
+<div id="assign_panel" class="tip">
+    <div class="tiptop"><span>账户分配</span><a></a></div>
+    <div class="tipinfo">
+        <div class="formbody">
+            <form id="assign">
+                <input id="aId" name="accountId" type="hidden" value=""/>
+                <ul class="forminfo">
+                    <li><label>账户名</label><input id="aName" class="dfinput" disabled/></li>
+                    <li><label>选择用户</label><div class="vocation"><select id="user" name="userId"><option value="">--请选择--</option> </select></div></li>
+                    <li><label>账号类型</label><cite><input name="type" type="radio" value="main" checked/>主号&nbsp;&nbsp;&nbsp;&nbsp;<input name="type" type="radio" value="sub"/>附加号</cite></li>
+                    <li><label>&nbsp;</label><input type="button" class="btn" value="确认分配" onclick="assign()"/></li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="grid/js/GridManager.js"></script>
+<script type="text/javascript" src="js/select-ui.min.js"></script>
 <script type="text/javascript" src="js/common.js"></script>
 <script type="text/javascript">
-    $("#grid").grid({
-        ajax_url: contextPath + '/web/account/list.web',
-        columnData: [{
-            key: 'accountName',
-            width: '150px',
-            text: '账户名称'
-        }, {
-            key: 'unionName',
-            text: '联盟名称'
-        }, {
-            key: 'recommend',
-            text: '推广位'
-        }, {
-            key: 'gmtCreate',
-            text: '创建时间',
-            align: 'center',
-            template: function (createDate, rowObject) {
-                return new Date(createDate).format('YYYY-MM-DD HH:mm:ss');
-            }
-        }, {
-            key: 'action',
-            text: '操作',
-            align: 'center',
-            template: function (action, rowObject) {
-                return "<a style='color:#337ab7;' href='javascript:;' onclick='show(" + JSON.stringify(rowObject) + ")'>编辑</a>";
-            }
-        }]
+
+    $(document).ready(function () {
+        $(".tiptop a").click(function(){
+            $(".tip").fadeOut(200);
+            $("form").reset();
+        });
+        userList();
+        $("#user").uedSelect({
+            width : 167
+        });
+        $("#grid").grid({
+            ajax_url: contextPath + '/web/account/list.web',
+            columnData: [{
+                key: 'accountName',
+                width: '150px',
+                text: '账户名称'
+            }, {
+                key: 'unionName',
+                text: '联盟名称'
+            }, {
+                key: 'recommend',
+                text: '推广位'
+            }, {
+                key: 'name',
+                text: '管理员',
+                align: 'center',
+                template: function (name, rowObject) {
+                    if(name) {
+                        return name;
+                    }
+                    return "-";
+                }
+            }, {
+                key: 'phone',
+                text: '手机号码',
+                align: 'center',
+                template: function (phone, rowObject) {
+                    if(phone) {
+                        return phone;
+                    }
+                    return "-";
+                }
+            }, {
+                key: 'type',
+                text: '账号类型',
+                align: 'center',
+                template: function (type, rowObject) {
+                    if (type) {
+                        if (type == "main") {
+                            return "主号";
+                        }
+                        return "附加号";
+                    }
+                    return "-";
+                }
+            }, {
+                key: 'gmtCreate',
+                text: '创建时间',
+                align: 'center',
+                template: function (createDate, rowObject) {
+                    return new Date(createDate).format('YYYY-MM-DD HH:mm:ss');
+                }
+            }, {
+                key: 'action',
+                text: '操作',
+                align: 'center',
+                template: function (action, rowObject) {
+                    var h = "<a style='color:#337ab7;' href='javascript:;' onclick='showEditPanel(" + JSON.stringify(rowObject) + ")'>编辑</a> &nbsp;&nbsp;";
+                    if(!rowObject.userId) {
+                        h = h + "<a style='color:#337ab7;' href='javascript:;' onclick='showAssignPanel(" + JSON.stringify(rowObject) + ")'>分配</a>";
+                    }
+                    return h;
+                }
+            }]
+        });
     });
 
-    function show(account) {
-        $(".tip").fadeIn(200);
-        $("#sid").val(account.id);
+    function showEditPanel(account) {
+        $("#edit_panel").fadeIn(200);
+        $("#accountId").val(account.accountId);
         $("#accountName").val(account.accountName);
         $("#unionName").val(account.unionName);
         $("#recommend").val(account.recommend);
     }
 
+    function showAssignPanel(account) {
+        $("#assign_panel").fadeIn(200);
+        $("#aId").val(account.accountId);
+        $("#aName").val(account.accountName);
+    }
+
+    function userList() {
+        $.ajax({
+            url: contextPath + "/web/user/getUnassignedUsers.web",
+            type: "GET",
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var userList = result.body;
+                    var select = $("#user");
+                    for (var i = 0 ; i < userList.length ; i++) {
+                        var op = $("<option></option>");
+                        op.attr("value", userList[i].userId);
+                        op.html(userList[i].name);
+                        select.append(op);
+                    }
+                }
+            }
+        });
+    }
+    function assign() {
+        $.ajax({
+            url: contextPath + "/web/account/assign.web",
+            type: "POST",
+            data: $("#assign").serialize(),
+            success: function (result) {
+                if (result.status != SUCCESS) {
+                    alert(result.message);
+                } else {
+                    alert("分配成功");
+                    $("#grid").GM('refreshGrid', false);
+                    $(".tip").fadeOut(100);
+                    $("form").reset();
+                }
+            }
+        });
+    }
     function editAccount() {
         $.ajax({
             url: contextPath + "/web/account/saveAccount.web",

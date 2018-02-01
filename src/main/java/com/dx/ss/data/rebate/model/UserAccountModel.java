@@ -3,11 +3,11 @@ package com.dx.ss.data.rebate.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Setter
 @Getter
 public class UserAccountModel {
-
-    private Integer id;
 
     /**
      * 账户id
@@ -54,4 +54,8 @@ public class UserAccountModel {
      */
     private String name;
 
+    /**
+     * 创建时间
+     */
+    private Date gmtCreate;
 }

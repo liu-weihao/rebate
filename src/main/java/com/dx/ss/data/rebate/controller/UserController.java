@@ -51,6 +51,16 @@ public class UserController extends BaseController {
         return GridObj.of((WebPager<UserInfo>)userList);
     }
 
+    @RequestMapping(value = "/all.web", produces = { "application/json;charset=UTF-8" })
+    public ResponseObj getAllUsers() {
+        return ResponseObj.success(userService.getUserList());
+    }
+
+    @RequestMapping(value = "/getUnassignedUsers.web", produces = { "application/json;charset=UTF-8" })
+    public ResponseObj getUnassignedUsers() {
+        return ResponseObj.success(userService.getUnassignedUsers());
+    }
+
     @RequestMapping(value = "/info.web", produces = { "application/json;charset=UTF-8" })
     public ResponseObj addUser(HttpServletRequest request) {
         return ResponseObj.success(userService.getUserInfo(super.userId(request)));

@@ -13,8 +13,11 @@
     <form id="search">
         <ul class="seachform">
             <li>
-                <label>工资区间</label>
+                <label>日期范围</label>
                 <input id="start" name="startTime" class="dfinput"/> ~ <input id="end" name="endTime" class="dfinput"/>
+            </li>
+            <li>
+                <label>选择查看对象</label><input id="account" name="account" class="dfinput"/>
             </li>
             <li><label>&nbsp;</label><input type="button" class="scbtn" value="查询" onclick="doSearch()"/></li>
         </ul>
@@ -32,10 +35,16 @@
 <script type="text/javascript">
     $(document).ready(function () {
         laydate.render({
-            elem: '#start'
+            elem: '#start',
+            showBottom: false,
+            theme: 'grid',
+            max: new Date().format('YYYY-MM-DD')
         });
         laydate.render({
-            elem: '#end'
+            elem: '#end',
+            showBottom: false,
+            theme: 'grid',
+            max: new Date().format('YYYY-MM-DD')
         });
     });
 

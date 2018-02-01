@@ -2,7 +2,9 @@ package com.dx.ss.data.rebate.service;
 
 import com.dx.ss.data.rebate.bo.SessionUser;
 import com.dx.ss.data.rebate.condition.search.UserListSearch;
+import com.dx.ss.data.rebate.dal.beans.UserAccount;
 import com.dx.ss.data.rebate.dal.beans.UserInfo;
+import com.dx.ss.data.rebate.dal.mapper.UserAccountMapper;
 import com.dx.ss.data.rebate.dal.mapper.UserInfoMapper;
 import com.dx.ss.data.rebate.enums.StatusCode;
 import com.dx.ss.data.rebate.factory.PagerFactory;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +31,9 @@ public class UserService {
 
     @Autowired
     private UserInfoMapper userMapper;
+
+    @Autowired
+    private UserAccountMapper userAccountMapper;
 
     @Autowired
     private PagerFactory webPagerFactory;
@@ -93,6 +99,19 @@ public class UserService {
         }
         PageHelper.startPage(search.getCPage(), search.getPSize(), "gmt_create DESC");
         return webPagerFactory.generatePager((Page<UserInfo>) userMapper.selectByExample(ex));
+    }
+
+    public List<UserInfo> getUserList() {
+        return userMapper.selectAll();
+    }
+
+    public List<UserInfo> getUnassignedUsers() {
+        List<UserAccount> userAccountList = userAccountMapper.selectAll();
+        List<String> userIds = new ArrayList<>(userAccountList.size());
+        userAccountList.forEach(account -> userIds.add(account.getUserId()));
+        Example ex = new Example(UserInfo.class);
+        ex.createCriteria().andNotIn("userId", userIds);
+        return userMapper.selectByExample(ex);
     }
 
     public boolean changePassword(String userId, String password) {

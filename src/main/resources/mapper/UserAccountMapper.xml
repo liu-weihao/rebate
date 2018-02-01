@@ -1,39 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dx.ss.data.rebate.dal.mapper.UserAccountMapper">
-  <resultMap id="BaseResultMap" type="com.dx.ss.data.rebate.dal.beans.UserAccount">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="account_id" jdbcType="INTEGER" property="accountId" />
-    <result column="user_id" jdbcType="VARCHAR" property="userId" />
-    <result column="type" jdbcType="VARCHAR" property="type" />
-    <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
-    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
-    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.dx.ss.data.rebate.dal.beans.UserAccount">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="account_id" jdbcType="INTEGER" property="accountId"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify"/>
+    </resultMap>
 
-  <resultMap id="UserAccountModel" type="com.dx.ss.data.rebate.model.UserAccountModel">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="account_id" jdbcType="INTEGER" property="accountId" />
-    <result column="account_name" jdbcType="VARCHAR" property="accountName" />
-    <result column="union_name" jdbcType="VARCHAR" property="unionName" />
-    <result column="recommend" jdbcType="VARCHAR" property="recommend" />
-    <result column="type" jdbcType="VARCHAR" property="type" />
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
-  </resultMap>
+    <resultMap id="UserAccountModel" type="com.dx.ss.data.rebate.model.UserAccountModel">
+        <id column="account_id" jdbcType="INTEGER" property="accountId"/>
+        <result column="account_name" jdbcType="VARCHAR" property="accountName"/>
+        <result column="union_name" jdbcType="VARCHAR" property="unionName"/>
+        <result column="recommend" jdbcType="VARCHAR" property="recommend"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+    </resultMap>
 
-  <select id="getUserAccountList" parameterType="map" resultMap="UserAccountModel">
-    SELECT ua.id, ua.user_id, ua.account_id, ua.type, u.username, u.name, u.phone,
-      a.account_name, a.union_name, a.recommend, ua.gmt_create
-    FROM user_account AS ua
-    LEFT JOIN user_info AS u ON ua.user_id=u.user_id
-    LEFT JOIN `account` AS a ON ua.account_id=a.id
-    ORDER BY a.union_name, ua.id DESC
-  </select>
+    <select id="getUserAccountList" parameterType="map" resultMap="UserAccountModel">
+        SELECT
+            a.id AS account_id,
+            a.account_name,
+            a.union_name,
+            a.recommend,
+            u.user_id,
+            u.username,
+            u.name,
+            u.phone,
+            ua.type,
+            a.gmt_create
+        FROM `account` AS a
+            LEFT JOIN user_account AS ua ON ua.account_id = a.id
+            LEFT JOIN user_info AS u ON ua.user_id = u.user_id
+        ORDER BY a.union_name ASC, ua.id DESC
+    </select>
 </mapper>
