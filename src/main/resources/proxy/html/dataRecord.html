@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge | chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>数据查看</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .dfinput {
+            width: 80px;
+            margin: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="rightinfo">
+    <div class="formbody">
+        <form id="search">
+            <ul class="seachform">
+                <li>
+                    <label>日期范围</label>
+                    <input id="start" name="startTime" class="dfinput"/> ~ <input id="end" name="endTime" class="dfinput"/>
+                </li>
+                <li><label>&nbsp;</label><input type="button" class="scbtn" value="开始录入" onclick="record()"/></li>
+            </ul>
+        </form>
+    </div>
+    <table id="data_table" class="tablelist">
+        <thead>
+        <tr>
+            <th>使用人</th>
+            <th>微信</th>
+            <th>联盟</th>
+            <th>推广位</th>
+            <th>录入时间</th>
+            <th>粉丝数量</th>
+            <th>订单数量</th>
+            <th>成交预估（元）</th>
+            <th>结算预估（元）</th>
+        </tr>
+        </thead>
+        <tr></tr>
+    </table>
+</div>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="laydate/laydate.js"></script>
+<script type="text/javascript" src="js/bignumber.min.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        laydate.render({
+            elem: '#start',
+            showBottom: false,
+            theme: 'grid',
+            max: new Date().format('YYYY-MM-DD')
+        });
+        laydate.render({
+            elem: '#end',
+            showBottom: false,
+            theme: 'grid',
+            max: new Date().format('YYYY-MM-DD')
+        });
+    });
+
+    function record() {
+        if($("#start").val() == "") {
+            alert("请选择开始时间");
+            $("#start").focus();
+            return;
+        }
+        if($("#end").val() == "") {
+            alert("请选择结束时间");
+            $("#end").focus();
+            return;
+        }
+        $.ajax({
+            url: contextPath + "/web/account/getUserAccountsByDate.web",
+            type: "GET",
+            data: $("#search").serialize(),
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    tableRender(result.body);
+                }
+            }
+        });
+    }
+
+    function tableRender(accountList) {
+        if(!accountList) return;
+        var table = $("#data_table");
+        $("#data_table tr:not(:first)").remove();
+        for (var i = 0; i < accountList.length; i++) {
+
+            var row = $("<tr>");
+            if(accountList[i].accountId){
+                row.append("<td>" + accountList[i].name + "</td>");
+                row.append("<td>" + accountList[i].accountName + "</td>");
+                row.append("<td>" + accountList[i].unionName + "</td>");
+                row.append("<td>" + accountList[i].recommend + "</td>");
+                row.append("<td>" + new Date(accountList[i].gmtCreate).format('YYYY-MM-DD') + "</td>");
+                row.append("<td><input name='orderNum' class='dfinput'></td>");
+                row.append("<td><input name='fansNum' class='dfinput'></td>");
+                row.append("<td><input name='dealNum' class='dfinput'></td>");
+                row.append("<td><input name='settleNum' class='dfinput'></td>");
+            } else if(i != accountList.length - 1){
+                row.append("<td colspan='9'>&nbsp;</td>")
+            }
+
+            table.append(row);
+        }
+    }
+
+</script>
+</body>
+</html>

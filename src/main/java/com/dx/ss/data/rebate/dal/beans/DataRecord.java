@@ -1,12 +1,9 @@
 package com.dx.ss.data.rebate.dal.beans;
 
-import com.dx.ss.data.rebate.annotation.Domain;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 
-@Domain
 @Table(name = "data_record")
 public class DataRecord {
     @Id
@@ -15,6 +12,12 @@ public class DataRecord {
 
     @Column(name = "account_id")
     private Integer accountId;
+
+    /**
+     * 录入日期
+     */
+    @Column(name = "record_date")
+    private Date recordDate;
 
     /**
      * 订单数量
@@ -78,6 +81,24 @@ public class DataRecord {
      */
     public void setAccountId(Integer accountId) {
         this.accountId = accountId;
+    }
+
+    /**
+     * 获取录入日期
+     *
+     * @return record_date - 录入日期
+     */
+    public Date getRecordDate() {
+        return recordDate;
+    }
+
+    /**
+     * 设置录入日期
+     *
+     * @param recordDate 录入日期
+     */
+    public void setRecordDate(Date recordDate) {
+        this.recordDate = recordDate;
     }
 
     /**

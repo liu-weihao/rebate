@@ -7,6 +7,7 @@
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="account_id" jdbcType="INTEGER" property="accountId" />
+    <result column="record_date" jdbcType="DATE" property="recordDate" />
     <result column="order_num" jdbcType="INTEGER" property="orderNum" />
     <result column="fans_num" jdbcType="INTEGER" property="fansNum" />
     <result column="deal_num" jdbcType="DECIMAL" property="dealNum" />

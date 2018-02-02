@@ -33,11 +33,33 @@
                     </select>
                 </div>
             </li>
+            <li><label>展现形式</label><cite><input name="type" type="radio" value="graph" checked/>折线图&nbsp;&nbsp;&nbsp;&nbsp;<input name="type" type="radio" value="table"/>列表</cite></li>
             <li><label>&nbsp;</label><input type="button" class="scbtn" value="查询" onclick="doSearch()"/></li>
         </ul>
     </form>
 </div>
 <div id="main" style="width: 600px;height:400px;"></div>
+
+<table id="data_table" class="tablelist">
+    <thead>
+    <tr>
+        <th>日期</th>
+        <th>使用人</th>
+        <th>微信名字</th>
+        <th>粉丝数量</th>
+        <th>订单数量</th>
+        <th>成交预估（元）</th>
+        <th>结算预估（元）</th>
+        <th>&nbsp;</th>
+        <th>新增粉丝</th>
+        <th>新增订单</th>
+        <th>订单与粉丝比</th>
+        <th>单粉金额（元）</th>
+        <th>平均单笔订单金额（元）</th>
+    </tr>
+    </thead>
+    <tr></tr>
+</table>
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/select-ui.min.js"></script>
@@ -182,7 +204,25 @@
     }
 
     function doSearch() {
-
+        $.ajax({
+            url: contextPath + "/web/data/list.web",
+            type: "GET",
+            data: $("#search").serialize(),
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var dataList = result.body;
+                    var select = $("#account");
+                    $("#account option:not(:first)").remove();
+                    select.find("option[value='']").attr("selected",true);
+                    for (var i = 0 ; i < accountList.length ; i++) {
+                        var op = $("<option></option>");
+                        op.attr("value", accountList[i].id);
+                        op.html(accountList[i].accountName);
+                        select.append(op);
+                    }
+                }
+            }
+        });
     }
 </script>
 </body>
