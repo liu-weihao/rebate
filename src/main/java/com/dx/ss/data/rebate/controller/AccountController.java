@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -29,6 +30,12 @@ public class AccountController extends BaseController {
 
         BasePager<UserAccountModel> accountList = accountService.getUserAccountList(cPage, pSize);
         return GridObj.of((WebPager<UserAccountModel>) accountList);
+    }
+
+    @RequestMapping(value = "/getUserAccountsByDate.web", produces = {"application/json;charset=UTF-8"})
+    public ResponseObj getUserAccountList(@RequestParam(name = "starTime") String startTime, @RequestParam(name = "endTime") String endTime) {
+
+        return ResponseObj.success(accountService.getUserAccountList(startTime.trim(), endTime.trim()));
     }
 
     @RequestMapping(value = "/getAccountByUser.web", produces = {"application/json;charset=UTF-8"})

@@ -168,7 +168,8 @@
                 if (result.status == SUCCESS) {
                     var accountList = result.body;
                     var select = $("#account");
-                    select.remove(":not(:eq(0))");
+                    $("#account option:not(:first)").remove();
+                    select.find("option[value='']").attr("selected",true);
                     for (var i = 0 ; i < accountList.length ; i++) {
                         var op = $("<option></option>");
                         op.attr("value", accountList[i].id);

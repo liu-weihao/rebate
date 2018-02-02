@@ -15,13 +15,17 @@ import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -71,6 +75,25 @@ public class AccountService {
 
         PageHelper.startPage(pageNum, pageSize);
         return webPagerFactory.generatePager((Page<UserAccountModel>) userAccountMapper.getUserAccountList());
+    }
+
+    public List<UserAccountModel> getUserAccountList(String startTime, String endTime) {
+        List<UserAccountModel> dataList = new ArrayList<>();
+        List<UserAccountModel> accounts = userAccountMapper.getUserAccountList().stream().filter(account -> StringUtils.isNotBlank(account.getUserId())).collect(Collectors.toList());
+        DateTime start = DateTime.parse(startTime);
+        DateTime end = DateTime.parse(endTime);
+        int days = Days.daysBetween(start, end).getDays() + 1;
+        for (int i = 0; i < days; i++) {
+            for (UserAccountModel model : accounts) {
+                UserAccountModel copy = new UserAccountModel();
+                BeanUtils.copyProperties(model, copy);
+                copy.setGmtCreate(start.toDate());
+                dataList.add(copy);
+            }
+            dataList.add(new UserAccountModel());
+            start = start.plusDays(1);
+        }
+        return dataList;
     }
 
     public List<Account> getAccountByUser(String userId) {
