@@ -9,4 +9,6 @@ import java.util.List;
 public interface UserAccountMapper extends Mapper<UserAccount> {
 
     List<UserAccountModel> getUserAccountList();
+
+    List<UserAccountModel> getAccountList();
 }

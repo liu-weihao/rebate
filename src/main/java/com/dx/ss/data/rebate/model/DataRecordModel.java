@@ -23,20 +23,20 @@ public class DataRecordModel extends UserAccountModel{
     /**
      * 订单数量
      */
-    private Integer orderNum;
+    private int orderNum;
 
     /**
      * 粉丝数量
      */
-    private Integer fansNum;
+    private int fansNum;
 
     /**
      * 成交预估
      */
-    private BigDecimal dealNum;
+    private BigDecimal dealNum = new BigDecimal(0);
 
     /**
      * 结算预估
      */
-    private BigDecimal settleNum;
+    private BigDecimal settleNum = new BigDecimal(0);
 }

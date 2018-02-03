@@ -5,11 +5,12 @@ import com.dx.ss.data.rebate.dal.beans.DataRecord;
 import com.dx.ss.data.rebate.mapper.SuperMapper;
 import com.dx.ss.data.rebate.model.DataRecordModel;
 import org.apache.ibatis.annotations.Param;
-import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
 public interface DataRecordMapper extends SuperMapper<DataRecord> {
 
     List<DataRecordModel> getDataRecordList(@Param("search") DataRecordSearch search);
+
+    List<DataRecordModel> searchDataList(@Param("startTime") String startTime, @Param("endTime") String endTime);
 }

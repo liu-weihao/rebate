@@ -80,4 +80,53 @@
         a.union_name DESC,
         d.id DESC
     </select>
+
+    <select id="searchDataList" parameterType="map" resultMap="DataRecordModel">
+        SELECT
+        t.account_id,
+        t.account_name,
+        t.union_name,
+        t.recommend,
+        t.user_id,
+        t.username,
+        t.`name`,
+        t.phone,
+        t.type,
+        d.id,
+        d.deal_num,
+        d.fans_num,
+        d.order_num,
+        d.settle_num,
+        d.record_date,
+        d.gmt_create
+        FROM (
+        SELECT
+        ua.account_id,
+        a.account_name,
+        a.union_name,
+        a.recommend,
+        u.user_id,
+        u.username,
+        u.`name`,
+        u.phone,
+        ua.type
+        FROM
+        `account` AS a,
+        user_account AS ua,
+        user_info AS u
+        WHERE ua.account_id = a.id AND ua.user_id = u.user_id
+        ) AS t
+        LEFT JOIN data_record AS d ON (d.account_id = t.account_id
+        <if test="startTime != null and startTime != ''">
+            AND <![CDATA[ d.record_date >= #{startTime} ]]>
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND <![CDATA[ d.record_date <= #{endTime} ]]>
+        </if>
+        )
+        ORDER BY
+        d.record_date ASC,
+        t.union_name DESC,
+        d.id DESC
+    </select>
 </mapper>

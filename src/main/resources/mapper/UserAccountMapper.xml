@@ -44,4 +44,21 @@
             LEFT JOIN user_info AS u ON ua.user_id = u.user_id
         ORDER BY a.union_name ASC, ua.id DESC
     </select>
+
+    <select id="getAccountList" parameterType="map" resultMap="UserAccountModel">
+        SELECT
+            a.id AS account_id,
+            a.account_name,
+            a.union_name,
+            a.recommend,
+            u.user_id,
+            u.username,
+            u.name,
+            u.phone,
+            ua.type,
+            a.gmt_create
+        FROM `account` AS a, user_account AS ua, user_info AS u
+        WHERE ua.account_id = a.id AND ua.user_id = u.user_id
+        ORDER BY a.union_name ASC, ua.id DESC
+    </select>
 </mapper>

@@ -1,9 +1,12 @@
 package com.dx.ss.data.rebate.dal.beans;
 
+import com.dx.ss.data.rebate.annotation.Domain;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 
+@Domain
 @Table(name = "data_record")
 public class DataRecord {
     @Id
@@ -23,13 +26,13 @@ public class DataRecord {
      * 订单数量
      */
     @Column(name = "order_num")
-    private Integer orderNum;
+    private int orderNum;
 
     /**
      * 粉丝数量
      */
     @Column(name = "fans_num")
-    private Integer fansNum;
+    private int fansNum;
 
     /**
      * 成交预估
@@ -106,7 +109,7 @@ public class DataRecord {
      *
      * @return order_num - 订单数量
      */
-    public Integer getOrderNum() {
+    public int getOrderNum() {
         return orderNum;
     }
 
@@ -115,7 +118,7 @@ public class DataRecord {
      *
      * @param orderNum 订单数量
      */
-    public void setOrderNum(Integer orderNum) {
+    public void setOrderNum(int orderNum) {
         this.orderNum = orderNum;
     }
 
@@ -124,7 +127,7 @@ public class DataRecord {
      *
      * @return fans_num - 粉丝数量
      */
-    public Integer getFansNum() {
+    public int getFansNum() {
         return fansNum;
     }
 
@@ -133,7 +136,7 @@ public class DataRecord {
      *
      * @param fansNum 粉丝数量
      */
-    public void setFansNum(Integer fansNum) {
+    public void setFansNum(int fansNum) {
         this.fansNum = fansNum;
     }
 
