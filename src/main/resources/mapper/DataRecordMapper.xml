@@ -1,19 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dx.ss.data.rebate.dal.mapper.DataRecordMapper">
-  <resultMap id="BaseResultMap" type="com.dx.ss.data.rebate.dal.beans.DataRecord">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="account_id" jdbcType="INTEGER" property="accountId" />
-    <result column="record_date" jdbcType="DATE" property="recordDate" />
-    <result column="order_num" jdbcType="INTEGER" property="orderNum" />
-    <result column="fans_num" jdbcType="INTEGER" property="fansNum" />
-    <result column="deal_num" jdbcType="DECIMAL" property="dealNum" />
-    <result column="settle_num" jdbcType="DECIMAL" property="settleNum" />
-    <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
-    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
-    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.dx.ss.data.rebate.dal.beans.DataRecord">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="account_id" jdbcType="INTEGER" property="accountId"/>
+        <result column="record_date" jdbcType="DATE" property="recordDate"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="fans_num" jdbcType="INTEGER" property="fansNum"/>
+        <result column="deal_num" jdbcType="DECIMAL" property="dealNum"/>
+        <result column="settle_num" jdbcType="DECIMAL" property="settleNum"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify"/>
+    </resultMap>
+
+    <resultMap id="DataRecordModel" type="com.dx.ss.data.rebate.model.DataRecordModel">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="account_id" jdbcType="INTEGER" property="accountId"/>
+        <result column="record_date" jdbcType="DATE" property="recordDate"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="fans_num" jdbcType="INTEGER" property="fansNum"/>
+        <result column="deal_num" jdbcType="DECIMAL" property="dealNum"/>
+        <result column="settle_num" jdbcType="DECIMAL" property="settleNum"/>
+        <result column="account_name" jdbcType="VARCHAR" property="accountName"/>
+        <result column="union_name" jdbcType="VARCHAR" property="unionName"/>
+        <result column="recommend" jdbcType="VARCHAR" property="recommend"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+    </resultMap>
+
+    <select id="getDataRecordList" parameterType="map" resultMap="DataRecordModel">
+        SELECT
+        d.id,
+        d.account_id,
+        d.deal_num,
+        d.fans_num,
+        d.order_num,
+        d.settle_num,
+        d.record_date,
+        a.account_name,
+        a.union_name,
+        a.recommend,
+        u.user_id,
+        u.username,
+        u.`name`,
+        u.phone,
+        ua.type,
+        d.gmt_create
+        FROM
+        `account` AS a,
+        user_account AS ua,
+        user_info AS u,
+        data_record AS d
+        WHERE
+        ua.account_id = a.id
+        AND d.account_id = a.id
+        AND ua.user_id = u.user_id
+        <if test="search.startTime != null">
+            AND <![CDATA[ d.record_date >= #{search.startTime} ]]>
+        </if>
+        <if test="search.endTime != null">
+            AND <![CDATA[ d.record_date <= #{search.endTime} ]]>
+        </if>
+        <if test="search.userId != null and search.userId != ''">
+            AND <![CDATA[ u.user_id = #{search.userId} ]]>
+        </if>
+        <if test="search.accountId != null">
+            AND <![CDATA[ d.account_id = #{search.accountId} ]]>
+        </if>
+        ORDER BY
+        d.record_date ASC,
+        a.union_name DESC,
+        d.id DESC
+    </select>
 </mapper>

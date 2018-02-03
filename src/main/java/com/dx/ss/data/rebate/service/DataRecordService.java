@@ -3,6 +3,7 @@ package com.dx.ss.data.rebate.service;
 import com.dx.ss.data.rebate.condition.search.DataRecordSearch;
 import com.dx.ss.data.rebate.dal.beans.DataRecord;
 import com.dx.ss.data.rebate.dal.mapper.DataRecordMapper;
+import com.dx.ss.data.rebate.model.DataRecordModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class DataRecordService {
 
 
     public List<DataRecord> getDataList(DataRecordSearch search) {
+
 
         return dataRecordMapper.selectAll();
     }
@@ -35,5 +37,9 @@ public class DataRecordService {
         return dataRecordMapper.insertList(dataList);
     }
 
+    public List<DataRecordModel> getDataRecordList(DataRecordSearch search) {
+
+        return dataRecordMapper.getDataRecordList(search);
+    }
 
 }
