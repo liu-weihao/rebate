@@ -24,7 +24,7 @@ public class DataForm {
      * 录入日期
      */
     @NotNull(message = "请指定日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date recordDate;
 
     /**

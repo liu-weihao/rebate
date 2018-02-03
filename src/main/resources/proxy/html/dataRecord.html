@@ -100,17 +100,17 @@
             var row = $("<tr>");
             row.attr("id", dataList[i].id | 0);
             if (dataList[i].accountId) {
-                row.append("<td>" + (index++) + "</td>");
+                row.append("<td>" + (index++) + "<input type='hidden' id='accountId' name='accountId' value='" + dataList[i].accountId + "'></td>");
                 row.append("<td>" + dataList[i].name + "</td>");
                 row.append("<td>" + dataList[i].accountName + "</td>");
                 row.append("<td>" + dataList[i].unionName + "</td>");
                 row.append("<td>" + dataList[i].recommend + "</td>");
-                row.append("<td>" + new Date(dataList[i].recordDate).format('YYYY-MM-DD') + "</td>");
+                row.append("<td><span>" + new Date(dataList[i].recordDate).format('YYYY-MM-DD') + "</span></td>");
                 row.append("<td><input name='orderNum' class='dfinput' value='" + dataList[i].orderNum + "'></td>");
                 row.append("<td><input name='fansNum' class='dfinput' value='" + dataList[i].fansNum + "'></td>");
                 row.append("<td><input name='dealNum' class='dfinput' value='" + (dataList[i].dealNum | 0) + "'></td>");
                 row.append("<td><input name='settleNum' class='dfinput' value='" + (dataList[i].settleNum | 0) + "'></td>");
-                row.append("<td><a href='javascript:;' onclick='save(" + JSON.stringify(dataList[i]) + ", " + rowIndex + ")'>保存</a>&nbsp;&nbsp;<a href='javascript:;' onclick='clearData("+rowIndex+")'>清空</a></td>");
+                row.append("<td><p><a href='javascript:;' onclick='save(" + rowIndex + ")'>保存</a>&nbsp;&nbsp;<a href='javascript:;' onclick='clearData(" + rowIndex + ")'>清空</a></p></td>");
             } else if (i != dataList.length - 1) {
                 index = 1;
                 row.append("<td colspan='9'>&nbsp;</td>")
@@ -118,27 +118,37 @@
             rowIndex++;
             table.append(row);
         }
-        $("input:text").click(function(){
+        $("input:text").click(function () {
             $(this).select();
         });
     }
 
-    function save(record, rowIndex) {
-        console.log(record);
-        var data = {"id": record.id, "accountId": record.accountId, "recordDate": record.recordDate};
-        var inputs = $("#data_table tr").eq(rowIndex).find("input");
+    function save(rowIndex) {
 
-        data.orderNum = inputs[0].value;
-        data.fansNum = inputs[1].value;
-        data.dealNum = inputs[2].value;
-        data.settleNum = inputs[3].value;
-        console.log(data);
+        var data = {};
+        var row = $("#data_table tr").eq(rowIndex);
+        if(row.attr("id") != "0") {
+            data.id = row.attr("id") ;
+        }
+        var inputs = row.find("input");
+        data.accountId = inputs[0].value;
+        data.orderNum = inputs[1].value;
+        data.fansNum = inputs[2].value;
+        data.dealNum = inputs[3].value;
+        data.settleNum = inputs[4].value;
+        data.recordDate = row.find("span")[0].innerText;
         $.ajax({
             url: contextPath + "/web/data/record.web",
             type: "POST",
             data: data,
             success: function (result) {
-                alert(result.message);
+                if(result.status == SUCCESS){
+                    row.attr("id", result.body.id);
+                    alert("保存成功");
+                } else {
+                    alert(result.message);
+                }
+
             }
         });
     }

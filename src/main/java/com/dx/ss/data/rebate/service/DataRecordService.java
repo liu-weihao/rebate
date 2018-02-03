@@ -6,6 +6,7 @@ import com.dx.ss.data.rebate.dal.mapper.DataRecordMapper;
 import com.dx.ss.data.rebate.dal.mapper.UserAccountMapper;
 import com.dx.ss.data.rebate.model.DataRecordModel;
 import com.dx.ss.data.rebate.model.UserAccountModel;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -14,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DataRecordService {
@@ -65,7 +64,7 @@ public class DataRecordService {
                 copy.setRecordDate(start.toDate());
                 resultList.add(copy);
             }
-            if(i != days - 1) resultList.add(new DataRecordModel()); //相当于塞一个空行
+            if (i != days - 1) resultList.add(new DataRecordModel()); //相当于塞一个空行
             start = start.plusDays(1);
         }
         return resultList;
@@ -73,10 +72,10 @@ public class DataRecordService {
 
     public DataRecord saveDataRecord(DataRecord dataRecord) {
         if (dataRecord == null) return null;
-        if (dataRecord.getId() == null && dataRecord.getId() > 0) {
-            dataRecordMapper.insertSelective(dataRecord);
-        } else {
+        if (dataRecord.getId() != null && dataRecord.getId() > 0) {
             dataRecordMapper.updateByPrimaryKeySelective(dataRecord);
+        } else {
+            dataRecordMapper.insertSelective(dataRecord);
         }
         return dataRecord;
     }
@@ -86,9 +85,25 @@ public class DataRecordService {
         return dataRecordMapper.insertList(dataList);
     }
 
-    public List<DataRecordModel> getDataRecordList(DataRecordSearch search) {
+    public Map<Integer, List<DataRecordModel>> getDataRecordList(DataRecordSearch search) {
 
-        return dataRecordMapper.getDataRecordList(search);
+        //因为要算增量，所以时间倒退一天
+        DateTime start = new DateTime(search.getStartTime().getTime()).minusDays(1);
+        DateTime end = new DateTime(search.getEndTime().getTime());
+        search.setStartTime(start.toDate());
+
+
+        List<DataRecordModel> recordList = dataRecordMapper.getDataRecordList(search);
+        if (CollectionUtils.isEmpty(recordList)) return Maps.newHashMap();
+
+        Map<Integer, List<DataRecordModel>> map = new HashMap<>();
+        int days = Days.daysBetween(start, end).getDays() + 1;
+        for (int i = 0; i < days; i++) {
+            Date date = start.toDate();
+            map.put(i, recordList.stream().filter(record -> date.equals(record.getRecordDate())).collect(Collectors.toList()));
+            start = start.plusDays(1);
+        }
+        return map;
     }
 
 }

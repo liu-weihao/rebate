@@ -35,8 +35,6 @@ public class DataController extends BaseController {
         return ResponseObj.success(dataRecordService.searchDataList(startTime, endTime));
     }
 
-
-
     @RequestMapping(value = "/record.web", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
     public ResponseObj record(@Valid DataForm form, BindingResult result) {
         if (result.hasErrors()) {

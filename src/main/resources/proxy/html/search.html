@@ -13,6 +13,20 @@
             width: 80px;
             margin: 3px;
         }
+        .toggle_type {
+            border: solid 1px #d7e4ea;
+        }
+        .display_type {
+            float: right;
+            display: inline;
+        }
+        .sel {
+            background: #ececec;
+        }
+        .display_type img {
+            margin: 1px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -39,8 +53,8 @@
                     </select>
                 </div>
             </li>
-            <li><label>展现形式</label><cite><input name="type" type="radio" value="graph" checked/>折线图&nbsp;&nbsp;&nbsp;&nbsp;<input name="type" type="radio" value="table"/>列表</cite></li>
             <li><label>&nbsp;</label><input type="button" class="scbtn" value="查询" onclick="doSearch()"/></li>
+            <li class="toggle_type"><div class="display_type sel"><img id="list" src="images/list.png"></div>&nbsp;&nbsp;<div class="display_type"><img id="line" src="images/line.png"></div></li>
         </ul>
     </form>
 </div>
@@ -85,6 +99,14 @@
             showBottom: false,
             theme: 'grid',
             max: new Date().format('YYYY-MM-DD')
+        });
+        $("#list").click(function () {
+            $("#line").parent().removeClass("sel");
+            $(this).parent().addClass("sel");
+        });
+        $("#line").click(function () {
+            $("#list").parent().removeClass("sel");
+            $(this).parent().addClass("sel");
         });
         userList();
         $("#user").uedSelect({
@@ -146,32 +168,37 @@
             data: {"startTime": ($("#start").val() + " 00:00:00"), "endTime": ($("#end").val() + " 00:00:00"), "userId": $("#user").val(), "accountId": $("#account").val()},
             success: function (result) {
                 if (result.status == SUCCESS) {
-                    var dataList = result.body;
-                    if(dataList.length == 0) return;
-                    var recordDate = dataList[0].recordDate;
+                    var data = result.body;
+                    if(JSON.stringify(data) == '{}') {
+                        alert("暂无数据");
+                        return;
+                    }
+
                     var table = $("#data_table");
                     $("#data_table tr:not(:first)").remove();
-                    for (var i = 0; i < dataList.length; i++) {
-                        var row = $("<tr>");
-                        if(recordDate == dataList[i].recordDate){
-                            row.append("<td>" + dataList[i].recordDate + "</td>");
-                            row.append("<td>" + dataList[i].name + "</td>");
-                            row.append("<td>" + dataList[i].accountName + "</td>");
-                            row.append("<td>" + dataList[i].fansNum + "</td>");
-                            row.append("<td>" + dataList[i].orderNum + "</td>");
-                            row.append("<td>" + dataList[i].dealNum + "</td>");
-                            row.append("<td>" + dataList[i].settleNum + "</td>");
-                            /*row.append("<td>" + new Date(dataList[i].gmtCreate).format('YYYY-MM-DD') + "</td>");
-                            row.append("<td><input name='orderNum' class='dfinput'></td>");
-                            row.append("<td><input name='fansNum' class='dfinput'></td>");
-                            row.append("<td><input name='dealNum' class='dfinput'></td>");
-                            row.append("<td><input name='settleNum' class='dfinput'></td>");*/
-                        } else {
-                            row.append("<td colspan='9'>&nbsp;</td>");
-                            recordDate = dataList[i].recordDate;
-                        }
+                    for (var index in data) {
+                        if(index > 0) {
+                            var oldData = data[index - 1];
+                            var dataList = data[index];
+                            for (var i = 0; i < dataList.length; i++) {
 
-                        table.append(row);
+                                var row = $("<tr>");
+                                row.append("<td>" + dataList[i].recordDate + "</td>");
+                                row.append("<td>" + dataList[i].name + "</td>");
+                                row.append("<td>" + dataList[i].accountName + "</td>");
+                                row.append("<td>" + dataList[i].fansNum + "</td>");
+                                row.append("<td>" + dataList[i].orderNum + "</td>");
+                                row.append("<td>" + dataList[i].dealNum + "</td>");
+                                row.append("<td>" + dataList[i].settleNum + "</td>");
+                                row.append("<td>" + (dataList[i].fansNum - oldData[i].fansNum) + "</td>");
+                                row.append("<td>" + (dataList[i].orderNum - oldData[i].orderNum) + "</td>");
+                                row.append("<td>" + (new BigNumber(dataList[i].orderNum).dividedBy(dataList[i].fansNum).toString()) + "</td>");
+                                row.append("<td>" + (new BigNumber(dataList[i].dealNum).dividedBy(dataList[i].fansNum).toString()) + "</td>");
+                                row.append("<td>" + (new BigNumber(dataList[i].dealNum).dividedBy(dataList[i].orderNum).toString()) + "</td>");
+                                table.append(row);
+                            }
+                            table.append("<tr><td colspan='9'>&nbsp;</td></tr>");
+                        }
                     }
                 }
             }

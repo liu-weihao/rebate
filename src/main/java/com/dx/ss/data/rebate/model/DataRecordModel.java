@@ -1,5 +1,6 @@
 package com.dx.ss.data.rebate.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ public class DataRecordModel extends UserAccountModel{
     /**
      * 记录日期
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date recordDate;
 
     /**
