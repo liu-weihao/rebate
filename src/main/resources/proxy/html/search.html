@@ -59,6 +59,7 @@
     </form>
 </div>
 
+<div id="line_chart" style="width: 600px;height:400px;"></div>
 <table id="data_table" class="tablelist">
     <thead>
     <tr>
@@ -69,7 +70,6 @@
         <th>订单数量</th>
         <th>成交预估（元）</th>
         <th>结算预估（元）</th>
-        <th>&nbsp;</th>
         <th>新增粉丝</th>
         <th>新增订单</th>
         <th>订单与粉丝比</th>
@@ -119,6 +119,69 @@
             var userId = $(this).val();
             accountList(userId);
         });
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('line_chart'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '折线图堆叠'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['粉丝数量','订单数量','成交预估','结算预估']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['周一','周二','周三','周四','周五','周六','周日']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name:'粉丝数量',
+                    type:'line',
+                    stack: '总量',
+                    data:[120, 132, 101, 134, 90, 230, 210]
+                },
+                {
+                    name:'订单数量',
+                    type:'line',
+                    stack: '总量',
+                    data:[220, 182, 191, 234, 290, 330, 310]
+                },
+                {
+                    name:'成交预估',
+                    type:'line',
+                    stack: '总量',
+                    data:[150, 232, 201, 154, 190, 330, 410]
+                },
+                {
+                    name:'结算预估',
+                    type:'line',
+                    stack: '总量',
+                    data:[320, 332, 301, 334, 390, 330, 320]
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
     });
 
     function userList() {
@@ -161,6 +224,17 @@
         });
     }
 
+    var _data = {
+        "id": 0,
+        "recordDate": "",
+        "name": "",
+        "accountName": "",
+        "fansNum": 0,
+        "orderNum": 0,
+        "dealNum": 0,
+        "settleNum": 0
+    };
+
     function doSearch() {
         $.ajax({
             url: contextPath + "/web/data/list.web",
@@ -174,6 +248,7 @@
                         return;
                     }
 
+                    console.log(data);
                     var table = $("#data_table");
                     $("#data_table tr:not(:first)").remove();
                     for (var index in data) {
@@ -181,23 +256,24 @@
                             var oldData = data[index - 1];
                             var dataList = data[index];
                             for (var i = 0; i < dataList.length; i++) {
-
+                                var prev = $.extend(_data, oldData[i]);
+                                var curr = $.extend(_data, dataList[i]);
                                 var row = $("<tr>");
-                                row.append("<td>" + dataList[i].recordDate + "</td>");
-                                row.append("<td>" + dataList[i].name + "</td>");
-                                row.append("<td>" + dataList[i].accountName + "</td>");
-                                row.append("<td>" + dataList[i].fansNum + "</td>");
-                                row.append("<td>" + dataList[i].orderNum + "</td>");
-                                row.append("<td>" + dataList[i].dealNum + "</td>");
-                                row.append("<td>" + dataList[i].settleNum + "</td>");
-                                row.append("<td>" + (dataList[i].fansNum - oldData[i].fansNum) + "</td>");
-                                row.append("<td>" + (dataList[i].orderNum - oldData[i].orderNum) + "</td>");
-                                row.append("<td>" + (new BigNumber(dataList[i].orderNum).dividedBy(dataList[i].fansNum).toString()) + "</td>");
-                                row.append("<td>" + (new BigNumber(dataList[i].dealNum).dividedBy(dataList[i].fansNum).toString()) + "</td>");
-                                row.append("<td>" + (new BigNumber(dataList[i].dealNum).dividedBy(dataList[i].orderNum).toString()) + "</td>");
+                                row.append("<td>" + curr.recordDate + "</td>");
+                                row.append("<td>" + curr.name + "</td>");
+                                row.append("<td>" + curr.accountName + "</td>");
+                                row.append("<td>" + curr.fansNum + "</td>");
+                                row.append("<td>" + curr.orderNum + "</td>");
+                                row.append("<td>" + curr.dealNum + "</td>");
+                                row.append("<td>" + curr.settleNum + "</td>");
+                                row.append("<td>" + (curr.fansNum - prev.fansNum) + "</td>");
+                                row.append("<td>" + (curr.orderNum - prev.orderNum) + "</td>");
+                                row.append("<td>" + (new BigNumber(curr.orderNum).dividedBy(curr.fansNum).round(3).toString()) + "</td>");
+                                row.append("<td>" + (new BigNumber(curr.dealNum).dividedBy(curr.fansNum).round(2).toString()) + "</td>");
+                                row.append("<td>" + (new BigNumber(curr.dealNum).dividedBy(curr.orderNum).round(2).toString()) + "</td>");
                                 table.append(row);
                             }
-                            table.append("<tr><td colspan='9'>&nbsp;</td></tr>");
+                            table.append("<tr><td colspan='12'>&nbsp;</td></tr>");
                         }
                     }
                 }
