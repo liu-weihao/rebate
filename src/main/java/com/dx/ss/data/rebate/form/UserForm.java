@@ -30,6 +30,9 @@ public class UserForm {
     @NotBlank(message = "请输入登录密码")
     private String password;
 
+    @NotNull(message = "请选择用户角色")
+    private Integer roleId;
+
     private Integer userFrom = 30;
 
     private Integer status = 10;

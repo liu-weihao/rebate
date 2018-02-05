@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -13,60 +13,91 @@
 <div class="lefttop"><span></span>功能菜单</div>
 
 <dl class="leftmenu">
+    <!--
+        <dd>
+            <div class="title">
+                <span><img src="images/leftico01.png"/></span>用户管理
+            </div>
+            <ul class="menuson">
+                <li class="active"><cite></cite><a href="addUser.html" target="rightFrame">添加用户</a><i></i></li>
+                <li><cite></cite><a href="userList.html" target="rightFrame">用户列表</a><i></i></li>
+                <li><cite></cite><a href="roleList.html" target="rightFrame">角色授权</a><i></i></li>
+            </ul>
+        </dd>
 
-    <dd>
-        <div class="title">
-            <span><img src="images/leftico01.png"/></span>用户管理
-        </div>
-        <ul class="menuson">
-            <li class="active"><cite></cite><a href="addUser.html" target="rightFrame">添加用户</a><i></i></li>
-            <li><cite></cite><a href="userList.html" target="rightFrame">用户列表</a><i></i></li>
-            <li><cite></cite><a href="roleList.html" target="rightFrame">角色授权</a><i></i></li>
-        </ul>
-    </dd>
-
-    <dd>
-        <div class="title">
-            <span><img src="images/leftico02.png"/></span>微信管理
-        </div>
-        <ul class="menuson">
-            <li><cite></cite><a href="addAccount.html" target="rightFrame">添加微信</a><i></i></li>
-            <li><cite></cite><a href="accountList.html" target="rightFrame">微信列表</a><i></i></li>
-        </ul>
-    </dd>
+        <dd>
+            <div class="title">
+                <span><img src="images/leftico02.png"/></span>微信管理
+            </div>
+            <ul class="menuson">
+                <li><cite></cite><a href="addAccount.html" target="rightFrame">添加微信</a><i></i></li>
+                <li><cite></cite><a href="accountList.html" target="rightFrame">微信列表</a><i></i></li>
+            </ul>
+        </dd>
 
 
-    <dd>
-        <div class="title"><span><img src="images/leftico03.png"/></span>数据管理</div>
-        <ul class="menuson">
-            <li><cite></cite><a href="dataRecord.html" target="rightFrame">数据录入</a><i></i></li>
-            <li><cite></cite><a href="search.html" target="rightFrame">数据查看</a><i></i></li>
-            <li><cite></cite><a href="search.html" target="rightFrame">我的数据</a><i></i></li>
-            <li><cite></cite><a href="addSalarySetting.html" target="rightFrame">工资设置</a><i></i></li>
-            <li><cite></cite><a href="salaryList.html" target="rightFrame">工资设置列表</a><i></i></li>
-        </ul>
-    </dd>
-
+        <dd>
+            <div class="title"><span><img src="images/leftico03.png"/></span>数据管理</div>
+            <ul class="menuson">
+                <li><cite></cite><a href="dataRecord.html" target="rightFrame">数据录入</a><i></i></li>
+                <li><cite></cite><a href="search.html" target="rightFrame">数据查看</a><i></i></li>
+                <li><cite></cite><a href="search.html" target="rightFrame">我的数据</a><i></i></li>
+                <li><cite></cite><a href="addSalarySetting.html" target="rightFrame">工资设置</a><i></i></li>
+                <li><cite></cite><a href="salaryList.html" target="rightFrame">工资设置列表</a><i></i></li>
+            </ul>
+        </dd>
+    -->
 </dl>
 
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
 <script type="text/javascript">
     $(function () {
-        //导航切换
-        $(".menuson li").click(function () {
-            $(".menuson li.active").removeClass("active")
-            $(this).addClass("active");
-        });
-        $('.title').click(function () {
-            var $ul = $(this).next('ul');
-            $('dd').find('ul').slideUp();
-            if ($ul.is(':visible')) {
-                $(this).next('ul').slideUp();
-            } else {
-                $(this).next('ul').slideDown();
+        menus();
+
+    });
+
+    function menus() {
+        $.ajax({
+            url: contextPath + "/menus.web",
+            type: "GET",
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var menuList = result.body;
+                    var leftmenu = $(".leftmenu");
+                    for (var i = 0; i < menuList.length; i++) {
+                        var dd = $("<dd>");
+                        dd.append("<div class='title'><span><img src='"+menuList[i].icon+"'/></span>"+menuList[i].menuName+"</div>");
+                        var ul = $("<ul class='menuson'>");
+                        var childList = menuList[i].childList;
+                        for (var j = 0; j < childList.length; j++) {
+                            console.log(j);
+                            console.log(childList[j]);
+                            ul.append("<li><cite></cite><a href='"+childList[j].url+"' target='rightFrame'>"+childList[j].menuName+"</a><i></i></li>");
+                        }
+                        dd.append(ul);
+                        leftmenu.append(dd);
+                    }
+
+                    //导航切换
+                    $(".menuson li").click(function () {
+                        $(".menuson li.active").removeClass("active")
+                        $(this).addClass("active");
+                    });
+                    $('.title').click(function () {
+                        var $ul = $(this).next('ul');
+                        $('dd').find('ul').slideUp();
+                        if ($ul.is(':visible')) {
+                            $(this).next('ul').slideUp();
+                        } else {
+                            $(this).next('ul').slideDown();
+                        }
+                    });
+                }
             }
         });
-    })
+
+    }
 </script>
 </body>
 </html>

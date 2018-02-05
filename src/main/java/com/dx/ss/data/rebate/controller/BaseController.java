@@ -90,6 +90,14 @@ public class BaseController {
         return null;
     }
 
+    public Integer roleId(HttpServletRequest request){
+        SessionUser sessionUser = getSessionUser(request);
+        if(sessionUser != null){
+            return sessionUser.getRoleId();
+        }
+        return null;
+    }
+
     public void destory(HttpServletRequest request){
         request.getSession().setAttribute(ViewConstants.LOGIN_TICKET_USER, null);
     }

@@ -6,11 +6,13 @@ import com.dx.ss.data.rebate.dal.beans.UserInfo;
 import com.dx.ss.data.rebate.enums.StatusCode;
 import com.dx.ss.data.rebate.form.UserForm;
 import com.dx.ss.data.rebate.helper.ServletHelper;
+import com.dx.ss.data.rebate.model.UserModel;
 import com.dx.ss.data.rebate.pager.BasePager;
 import com.dx.ss.data.rebate.pager.WebPager;
 import com.dx.ss.data.rebate.service.UserService;
 import com.dx.ss.data.rebate.vo.GridObj;
 import com.dx.ss.data.rebate.vo.ResponseObj;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -46,9 +48,9 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/list.web", produces = { "application/json;charset=UTF-8" })
-    public GridObj<UserInfo> getUserList(UserListSearch search) {
-        BasePager<UserInfo> userList = userService.getUserList(search);
-        return GridObj.of((WebPager<UserInfo>)userList);
+    public GridObj<UserModel> getUserList(UserListSearch search) {
+        BasePager<UserModel> userList = userService.getUserList(search);
+        return GridObj.of((WebPager<UserModel>)userList);
     }
 
     @RequestMapping(value = "/all.web", produces = { "application/json;charset=UTF-8" })
@@ -71,14 +73,18 @@ public class UserController extends BaseController {
         if (result.hasErrors()) {
             return ResponseObj.fail(StatusCode.FORM_INVALID, result.getAllErrors().get(0).getDefaultMessage());
         }
+        if (CollectionUtils.isNotEmpty(userService.getUserByUsername(userForm.getUsername()))) {
+            return ResponseObj.fail(StatusCode.BIZ_FAILED, "用户名已存在");
+        }
         if (userService.addUserInfo(userForm)) return ResponseObj.success();
         return ResponseObj.fail();
     }
 
     @RequestMapping(value = "/editUser.web", produces = { "application/json;charset=UTF-8" }, method = RequestMethod.POST)
-    public ResponseObj addUser(@RequestParam(name = "userId") String userId, @RequestParam(name = "name") String name,
-                               @RequestParam(name = "workAge") Integer workAge, @RequestParam(name = "phone") String phone) {
-        if (userService.editUserInfo(userId, name, workAge, phone)) {
+    public ResponseObj editUser(@RequestParam(name = "userId") String userId, @RequestParam(name = "name") String name,
+                               @RequestParam(name = "workAge") Integer workAge, @RequestParam(name = "phone") String phone,
+                               @RequestParam(name = "roleId") Integer roleId) {
+        if (userService.editUserInfo(userId, name, workAge, phone, roleId)) {
             return ResponseObj.success();
         }
         return ResponseObj.fail();

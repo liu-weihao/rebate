@@ -11,7 +11,6 @@ import javax.persistence.*;
 public class UserInfo {
     @Id
     @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "SELECT LAST_INSERT_ID()")
     private String userId;
 
     /**

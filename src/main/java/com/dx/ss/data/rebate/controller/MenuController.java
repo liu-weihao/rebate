@@ -1,6 +1,5 @@
 package com.dx.ss.data.rebate.controller;
 
-import com.dx.ss.data.rebate.model.RoleMenuModel;
 import com.dx.ss.data.rebate.service.MenuService;
 import com.dx.ss.data.rebate.vo.ResponseObj;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,19 +9,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/")
-public class MenuController {
+public class MenuController extends BaseController {
 
     @Autowired
     private MenuService menuService;
 
-    @RequestMapping(value = "left", produces = { "application/json;charset=UTF-8" })
-    public ResponseObj leftMenu(@RequestParam(name = "roleId") Integer roleId) {
-        List<RoleMenuModel> menus = menuService.getRoleMenus(roleId);
-        return ResponseObj.success(menus);
+    @RequestMapping(value = "menus.web", produces = { "application/json;charset=UTF-8" })
+    public ResponseObj menus(HttpServletRequest request, Integer roleId) {
+        if(roleId == null) {
+            roleId = super.roleId(request);
+        }
+        return ResponseObj.success(menuService.getRoleMenus(roleId));
     }
 
     @RequestMapping(value = "right")

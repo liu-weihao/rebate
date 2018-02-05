@@ -1,7 +1,9 @@
 package com.dx.ss.data.rebate.interceptor.session;
 
 import com.dx.ss.data.rebate.constants.ViewConstants;
+import com.dx.ss.data.rebate.enums.StatusCode;
 import com.dx.ss.data.rebate.utils.CommonUtils;
+import com.dx.ss.data.rebate.vo.ResponseObj;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +46,8 @@ public class WebSessionInterceptor extends SessionInterceptor {
         PrintWriter writer = null;
         try {
         	writer = response.getWriter();
-            writer.write("<script>alert('登录已过期，请您重新登录');window.top.location='/login.html';</script>");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			writer.write(ResponseObj.fail(StatusCode.LOGIN_EXPIRE, "登录已过期，请您重新登录").toJSON());
         } catch (Exception e) {
             sessionLog.error("跳转失败", e);
         } finally {

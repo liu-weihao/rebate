@@ -1,9 +1,11 @@
 package com.dx.ss.data.rebate;
 
 import com.dx.ss.data.rebate.model.DataRecordModel;
+import com.dx.ss.data.rebate.model.MenuModel;
 import com.dx.ss.data.rebate.model.UserAccountModel;
 import com.dx.ss.data.rebate.service.AccountService;
 import com.dx.ss.data.rebate.service.DataRecordService;
+import com.dx.ss.data.rebate.service.MenuService;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Assert;
@@ -25,6 +27,9 @@ public class RebateApplicationTests {
 	@Autowired
 	private DataRecordService recordService;
 
+	@Autowired
+	private MenuService menuService;
+
 	private String startTime = "2018-02-01";
 	private String endTime = "2018-02-03";
 
@@ -39,5 +44,11 @@ public class RebateApplicationTests {
 	public void recordListTest() {
 		List<DataRecordModel> dataList = recordService.searchDataList(startTime, endTime);
 		Assert.assertEquals(8, dataList.size());
+	}
+
+	@Test
+	public void roleMenuTest() {
+		List<MenuModel> menus = menuService.getRoleMenus(2);
+		Assert.assertEquals(1, menus.size());
 	}
 }

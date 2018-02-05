@@ -36,6 +36,9 @@ img {
     border: 0;
 }
 
+select {
+    height: 32px;
+}
 dl, dt, dd, span {
     margin: 0;
     padding: 0;

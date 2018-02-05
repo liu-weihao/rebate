@@ -108,12 +108,6 @@
             $(this).parent().addClass("sel");
         });
         userList();
-        $("#user").uedSelect({
-            width : 100
-        });
-        $("#account").uedSelect({
-            width : 135
-        });
         $("#user").change(function () {
             var userId = $(this).val();
             accountList(userId);

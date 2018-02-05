@@ -4,11 +4,14 @@ import com.dx.ss.data.rebate.bo.SessionUser;
 import com.dx.ss.data.rebate.condition.search.UserListSearch;
 import com.dx.ss.data.rebate.dal.beans.UserAccount;
 import com.dx.ss.data.rebate.dal.beans.UserInfo;
+import com.dx.ss.data.rebate.dal.beans.UserRoleInfo;
 import com.dx.ss.data.rebate.dal.mapper.UserAccountMapper;
 import com.dx.ss.data.rebate.dal.mapper.UserInfoMapper;
+import com.dx.ss.data.rebate.dal.mapper.UserRoleInfoMapper;
 import com.dx.ss.data.rebate.enums.StatusCode;
 import com.dx.ss.data.rebate.factory.PagerFactory;
 import com.dx.ss.data.rebate.form.UserForm;
+import com.dx.ss.data.rebate.model.UserModel;
 import com.dx.ss.data.rebate.pager.BasePager;
 import com.dx.ss.data.rebate.utils.RandomUtils;
 import com.dx.ss.data.rebate.vo.ResponseObj;
@@ -20,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
@@ -31,6 +35,9 @@ public class UserService {
 
     @Autowired
     private UserInfoMapper userMapper;
+
+    @Autowired
+    private UserRoleInfoMapper userRoleInfoMapper;
 
     @Autowired
     private UserAccountMapper userAccountMapper;
@@ -53,8 +60,13 @@ public class UserService {
         if (!userInfo.getStatus().equals(10)) {
             return ResponseObj.fail(StatusCode.BIZ_FAILED, "该账号已被禁用，请联系管理员");
         }
+        UserRoleInfo probe = new UserRoleInfo();
+        probe.setUserId(userInfo.getUserId());
+
+        UserRoleInfo userRoleInfo = userRoleInfoMapper.selectOne(probe);
         SessionUser sessionUser = new SessionUser();
         sessionUser.setUserId(userInfo.getUserId());
+        sessionUser.setRoleId(userRoleInfo.getRoleId());
         sessionUser.setUsername(username);
         sessionUser.setLoginTime(new Date());
         sessionUser.setStatus(userInfo.getStatus());
@@ -66,39 +78,53 @@ public class UserService {
         return userMapper.selectByPrimaryKey(userId);
     }
 
+    public List<UserInfo> getUserByUsername(String username) {
+        if (StringUtils.isBlank(username)) return null;
+        Example ex = new Example(UserInfo.class);
+        ex.createCriteria().andEqualTo("username", username);
+        return userMapper.selectByExample(ex);
+    }
+
+    @Transactional
     public boolean addUserInfo(UserForm userForm) {
         UserInfo user = new UserInfo();
         BeanUtils.copyProperties(userForm, user);
         user.setUserId(RandomUtils.getPrimaryKey());
         user.setPassword(DigestUtils.md5Hex(userForm.getPassword()));
+        user.setNickname(userForm.getName());
         user.setType(10);
+        UserRoleInfo userRole = new UserRoleInfo();
+        userRole.setUserId(user.getUserId());
+        userRole.setRoleId(userForm.getRoleId());
+        userRoleInfoMapper.insertSelective(userRole);
         return userMapper.insertSelective(user) == 1;
     }
 
-    public boolean editUserInfo(String userId, String name, Integer workAge, String phone) {
+    public boolean editUserInfo(String userId, String name, Integer workAge, String phone, Integer roleId) {
         if (StringUtils.isBlank(userId)) return false;
         UserInfo user = userMapper.selectByPrimaryKey(userId);
         if (user == null) return false;
         user.setName(name);
+        user.setNickname(name);
         user.setPhone(phone);
         if (workAge != null) {
             user.setWorkAge(workAge);
         }
+        Example ex = new Example(UserInfo.class);
+        ex.createCriteria().andEqualTo("userId", userId);
+        userRoleInfoMapper.deleteByExample(ex); //删除角色关联
+
+        UserRoleInfo userRole = new UserRoleInfo();
+        userRole.setUserId(userId);
+        userRole.setRoleId(roleId);
+        userRoleInfoMapper.insertSelective(userRole); //重新关联角色
         userMapper.updateByPrimaryKeySelective(user);
         return true;
     }
 
-    public BasePager<UserInfo> getUserList(UserListSearch search) {
-        Example ex = new Example(UserInfo.class);
-        Example.Criteria criteria = ex.createCriteria();
-        if (StringUtils.isNotBlank(search.getName())) {
-            criteria.andEqualTo("name", search.getName());
-        }
-        if (StringUtils.isNotBlank(search.getPhone())) {
-            criteria.andEqualTo("phone", search.getPhone());
-        }
+    public BasePager<UserModel> getUserList(UserListSearch search) {
         PageHelper.startPage(search.getCPage(), search.getPSize(), "gmt_create DESC");
-        return webPagerFactory.generatePager((Page<UserInfo>) userMapper.selectByExample(ex));
+        return webPagerFactory.generatePager((Page<UserModel>) userMapper.getUserList(search));
     }
 
     public List<UserInfo> getUserList() {

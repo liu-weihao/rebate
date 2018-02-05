@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class RoleInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     /**
      * 角色名称
@@ -39,14 +39,14 @@ public class RoleInfo {
     /**
      * @return id
      */
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
     /**
      * @param id
      */
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

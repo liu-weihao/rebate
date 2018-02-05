@@ -16,7 +16,7 @@ public class UserRoleInfo {
     private String userId;
 
     @Column(name = "role_id")
-    private Long roleId;
+    private Integer roleId;
 
     /**
      * 是否删除：1-是，0-否
@@ -61,14 +61,14 @@ public class UserRoleInfo {
     /**
      * @return role_id
      */
-    public Long getRoleId() {
+    public Integer getRoleId() {
         return roleId;
     }
 
     /**
      * @param roleId
      */
-    public void setRoleId(Long roleId) {
+    public void setRoleId(Integer roleId) {
         this.roleId = roleId;
     }
 
