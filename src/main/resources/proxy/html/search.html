@@ -178,6 +178,8 @@
             type: "GET",
             data: {"startTime": ($("#start").val() + " 00:00:00"), "endTime": ($("#end").val() + " 00:00:00"), "userId": $("#user").val(), "accountId": $("#account").val()},
             success: function (result) {
+                $("#data_table tr:not(:first)").remove();
+                
                 if (result.status == SUCCESS) {
                     var data = result.body;
                     if(JSON.stringify(data) == '{}') {
@@ -186,7 +188,6 @@
                     }
 
                     var table = $("#data_table");
-                    $("#data_table tr:not(:first)").remove();
                     var duration = $("#start").val() + " 至 " + $("#end").val();
                     var totalNum = 0;
                     var totalFans = new BigNumber(0), totalOrder = new BigNumber(0), totalDeal = new BigNumber(0), totalSettle = new BigNumber(0);
