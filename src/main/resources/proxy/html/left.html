@@ -54,7 +54,6 @@
 <script type="text/javascript">
     $(function () {
         menus();
-
     });
 
     function menus() {
@@ -71,8 +70,6 @@
                         var ul = $("<ul class='menuson'>");
                         var childList = menuList[i].childList;
                         for (var j = 0; j < childList.length; j++) {
-                            console.log(j);
-                            console.log(childList[j]);
                             ul.append("<li><cite></cite><a href='"+childList[j].url+"' target='rightFrame'>"+childList[j].menuName+"</a><i></i></li>");
                         }
                         dd.append(ul);
@@ -81,7 +78,7 @@
 
                     //导航切换
                     $(".menuson li").click(function () {
-                        $(".menuson li.active").removeClass("active")
+                        $(".menuson li.active").removeClass("active");
                         $(this).addClass("active");
                     });
                     $('.title').click(function () {

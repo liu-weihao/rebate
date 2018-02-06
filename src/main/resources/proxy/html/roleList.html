@@ -29,19 +29,8 @@
         <div class="formbody">
             <form id="menu">
                 <input id="roleId" name="roleId" type="hidden" value=""/>
-                <ul class="forminfo">
-                    <li>
-                        <label>工资区间</label>
-                        <input id="start" name="start" class="dfinput" value="" style="width: 120px;" onkeyup="this.value=this.value.replace(/[^0-9.]/ig, '')"/>
-                        ~
-                        <input id="end" name="end" class="dfinput" style="width: 120px;" onkeyup="this.value=this.value.replace(/[^0-9.]/ig, '')"/>
-                        <i>万</i>
-                    </li>
-                    <li><label>提成比例</label><input id="percent" name="percent" class="dfinput" style="width: 120px;"/><i>%</i></li>
-                    <li><label>附加奖励</label><input id="extraAward" name="extraAward" value="" class="dfinput" style="width: 120px;"/></li>
-                    <li><label>账号类型</label><cite><input id="main_type" name="type" type="radio" value="main" checked/>主号&nbsp;&nbsp;&nbsp;&nbsp;<input id="sub_type" name="type" type="radio" value="sub"/>附加号</cite></li>
-                    <li><label>&nbsp;</label><input type="button" class="btn" value="确认保存" onclick="editSalary()"/></li>
-                </ul>
+                <dl id="menus"></dl>
+                <li><label>&nbsp;</label><input type="button" class="btn" value="确认保存" onclick="addRoleMenus()"/></li>
             </form>
         </div>
     </div>
@@ -51,32 +40,121 @@
 <script type="text/javascript" src="grid/js/GridManager.js"></script>
 <script type="text/javascript" src="js/common.js"></script>
 <script type="text/javascript">
-    $("#grid").grid({
-        ajax_url: contextPath + '/web/role/list.web',
-        columnData: [{
-            key: 'roleName',
-            width: '130px',
-            text: '角色名称'
-        }, {
-            key: 'roleCode',
-            width: '130px',
-            text: '角色代码'
-        }, {
-            key: 'gmtCreate',
-            text: '创建时间',
-            align: 'center',
-            template: function (createDate, rowObject) {
-                return new Date(createDate).format('YYYY-MM-DD HH:mm:ss');
-            }
-        }, {
-            key: 'action',
-            text: '操作',
-            align: 'center',
-            template: function (action, rowObject) {
-                return "<a style=\"color:#337ab7;\" href=\"javascript:;\">角色授权</a>";
-            }
-        }]
+    $(document).ready(function () {
+        $(".tiptop a").click(function(){
+            $(".tip").fadeOut(200);
+        });
+        allMenus(); //初始化全部菜单
+        $("#grid").grid({
+            ajax_url: contextPath + '/web/role/list.web',
+            columnData: [{
+                key: 'roleName',
+                width: '130px',
+                text: '角色名称'
+            }, {
+                key: 'roleCode',
+                width: '130px',
+                text: '角色代码'
+            }, {
+                key: 'gmtCreate',
+                text: '创建时间',
+                align: 'center',
+                template: function (createDate, rowObject) {
+                    return new Date(createDate).format('YYYY-MM-DD HH:mm:ss');
+                }
+            }, {
+                key: 'action',
+                text: '操作',
+                align: 'center',
+                template: function (action, rowObject) {
+                    return "<a style='color:#337ab7;' href=\"javascript:;\" onclick='show("+JSON.stringify(rowObject)+")'>角色授权</a>";
+                }
+            }]
+        });
     });
+
+    function show(role) {
+        $("#roleId").val(role.id);
+        $(":checkbox").attr("checked", false);
+        menuList(); //初始化角色授权菜单
+        $(".tip").fadeIn(200);
+    }
+
+    function allMenus() {
+        $.ajax({
+            url: contextPath + "/allMenus.web",
+            type: "GET",
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var menuList = result.body;
+                    console.log(menuList);
+                    var leftmenu = $("#menus");
+                    for (var i = 0; i < menuList.length; i++) {
+                        var dd = $("<dd>");
+                        dd.append("<div class='title'><span><input id='"+menuList[i].id+"' name='menuId' value='"+menuList[i].id+"' type='checkbox'/></span>"+menuList[i].menuName+"</div>");
+                        var ul = $("<ul class='menuson'>");
+                        var childList = menuList[i].childList;
+                        for (var j = 0; j < childList.length; j++) {
+                            ul.append("<li><cite></cite><input id='"+childList[j].id+"' name='menuId' value='"+childList[j].id+"' type='checkbox'/>"+childList[j].menuName+"<i></i></li>");
+                        }
+                        dd.append(ul);
+                        leftmenu.append(dd);
+                    }
+
+                    //导航切换
+                    $(".menuson li").click(function () {
+                        $(".menuson li.active").removeClass("active");
+                        $(this).addClass("active");
+                    });
+                    $('.title').click(function () {
+                        var $ul = $(this).next('ul');
+                        $('dd').find('ul').slideUp();
+                        if ($ul.is(':visible')) {
+                            $(this).next('ul').slideUp();
+                        } else {
+                            $(this).next('ul').slideDown();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function menuList() {
+        $.ajax({
+            url: contextPath + "/menus.web",
+            type: "GET",
+            data: {"roleId": $("#roleId").val()},
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var menuList = result.body;
+                    for (var i = 0; i < menuList.length; i++) {
+                        $("#"+menuList[i].id).attr("checked", true);
+                        var childList = menuList[i].childList;
+                        for (var j = 0; j < childList.length; j++) {
+                            $("#"+menuList[j].id).attr("checked", true);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function addRoleMenus() {
+        $.ajax({
+            url: contextPath + "/addRoleMenus.web",
+            type: "POST",
+            data: $("#menu").serialize(),
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    alert("授权成功");
+
+                } else {
+                    alert(result.message);
+                }
+            }
+        });
+    }
 </script>
 </body>
 </html>
