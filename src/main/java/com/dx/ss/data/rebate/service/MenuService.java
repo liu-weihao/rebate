@@ -58,6 +58,7 @@ public class MenuService {
         for (RoleMenuModel roleMenu : roleMenus) {
             MenuModel menu = new MenuModel();
             BeanUtils.copyProperties(roleMenu, menu);
+            menu.setId(roleMenu.getMenuId());
             Integer menuId = roleMenu.getMenuId();
             menu.setId(menuId);
             if (roleMenu.getParentId() > 0) continue;
@@ -65,6 +66,7 @@ public class MenuService {
                 if (menuId.equals(m.getParentId())) {
                     MenuModel child = new MenuModel();
                     BeanUtils.copyProperties(m, child);
+                    child.setId(m.getMenuId());
                     menu.addChild(child);
                 }
             }

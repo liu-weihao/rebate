@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge | chrome=1">
     <meta name="renderer" content="webkit">
     <title>角色列表</title>
-    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css"/>
     <link rel="stylesheet" type="text/css" href="grid/css/GridManager.css">
 </head>
 <body>
@@ -22,15 +22,28 @@
 <div class="rightinfo">
     <table id="grid"></table>
 </div>
-
 <div class="tip">
     <div class="tiptop"><span>角色权限</span><a></a></div>
     <div class="tipinfo">
         <div class="formbody">
             <form id="menu">
                 <input id="roleId" name="roleId" type="hidden" value=""/>
-                <dl id="menus"></dl>
-                <li><label>&nbsp;</label><input type="button" class="btn" value="确认保存" onclick="addRoleMenus()"/></li>
+                <div id="menus"></div>
+                <ul class="forminfo">
+                    <li>&nbsp;</li>
+                    <li>
+                        <table id="menu_table" class="tablelist">
+                            <thead>
+                            <tr>
+                                <th>一级菜单</th>
+                                <th>二级菜单</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </li>
+                    <li><label>&nbsp;</label><input type="button" class="btn" value="确认保存" onclick="addRoleMenus()"/>
+                    </li>
+                </ul>
             </form>
         </div>
     </div>
@@ -41,7 +54,7 @@
 <script type="text/javascript" src="js/common.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".tiptop a").click(function(){
+        $(".tiptop a").click(function () {
             $(".tip").fadeOut(200);
         });
         allMenus(); //初始化全部菜单
@@ -67,7 +80,7 @@
                 text: '操作',
                 align: 'center',
                 template: function (action, rowObject) {
-                    return "<a style='color:#337ab7;' href=\"javascript:;\" onclick='show("+JSON.stringify(rowObject)+")'>角色授权</a>";
+                    return "<a style='color:#337ab7;' href=\"javascript:;\" onclick='show(" + JSON.stringify(rowObject) + ")'>角色授权</a>";
                 }
             }]
         });
@@ -87,33 +100,26 @@
             success: function (result) {
                 if (result.status == SUCCESS) {
                     var menuList = result.body;
-                    console.log(menuList);
-                    var leftmenu = $("#menus");
+                    var menuTable = $("#menu_table");
                     for (var i = 0; i < menuList.length; i++) {
-                        var dd = $("<dd>");
-                        dd.append("<div class='title'><span><input id='"+menuList[i].id+"' name='menuId' value='"+menuList[i].id+"' type='checkbox'/></span>"+menuList[i].menuName+"</div>");
-                        var ul = $("<ul class='menuson'>");
+                        var row = $("<tr>");
+                        row.append("<td><input id='menu_" + menuList[i].id + "' name='menuId' value='" + menuList[i].id + "' type='checkbox'/>" + menuList[i].menuName + "</td>");
                         var childList = menuList[i].childList;
+                        var td = $("<td>");
                         for (var j = 0; j < childList.length; j++) {
-                            ul.append("<li><cite></cite><input id='"+childList[j].id+"' name='menuId' value='"+childList[j].id+"' type='checkbox'/>"+childList[j].menuName+"<i></i></li>");
+                            td.append("<input id='menu_" + menuList[i].id + "_" + childList[j].id + "' name='menuId' value='" + childList[j].id + "' type='checkbox'/>" + childList[j].menuName);
                         }
-                        dd.append(ul);
-                        leftmenu.append(dd);
+                        row.append(td);
+                        menuTable.append(row);
                     }
+                    var chkbox = $("input[id^='menu_']");
 
-                    //导航切换
-                    $(".menuson li").click(function () {
-                        $(".menuson li.active").removeClass("active");
-                        $(this).addClass("active");
-                    });
-                    $('.title').click(function () {
-                        var $ul = $(this).next('ul');
-                        $('dd').find('ul').slideUp();
-                        if ($ul.is(':visible')) {
-                            $(this).next('ul').slideUp();
-                        } else {
-                            $(this).next('ul').slideDown();
-                        }
+                    $.each(rows, function (index, row) {
+                        var chkbox = $(row).find("input:checkbox");
+
+                        $(chkbox[0]).change(function () {
+                            chkbox.attr("checked", $(this).is(":checked"))
+                        });
                     });
                 }
             }
@@ -129,10 +135,10 @@
                 if (result.status == SUCCESS) {
                     var menuList = result.body;
                     for (var i = 0; i < menuList.length; i++) {
-                        $("#"+menuList[i].id).attr("checked", true);
+                        $("#" + menuList[i].id).attr("checked", true);
                         var childList = menuList[i].childList;
                         for (var j = 0; j < childList.length; j++) {
-                            $("#"+menuList[j].id).attr("checked", true);
+                            $("#" + childList[j].id).attr("checked", true);
                         }
                     }
                 }
@@ -148,7 +154,7 @@
             success: function (result) {
                 if (result.status == SUCCESS) {
                     alert("授权成功");
-
+                    $(".tip").fadeOut(200);
                 } else {
                     alert(result.message);
                 }
