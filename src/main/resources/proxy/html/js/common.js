@@ -63,27 +63,6 @@ function getBasePath() {
     return localhostPath + projectName + '/';
 }
 
-function createGrid(options) {
-
-    var _default = {
-        height: "auto",
-        gridManagerName: 'grid_manager',
-        supportRemind: false,
-        disableCache: false,
-        supportAjaxPage: true,
-        supportSorting: false,
-        supportDrag: false,
-        supportAutoOrder: true,
-        ajax_type: 'GET',
-        dataKey: 'dataList',
-        totalsKey: 'total',
-        pageSize: 20
-    };
-    var _options = $.extend(_default, options);
-    return $("#" + _options.elem).GM(_options);
-}
-
-
 /**
  * 日期格式化
  * @param fmt
@@ -130,7 +109,6 @@ function dateFormatYMD(data) {
     $.fn.serializeJson = function () {
         var serializeObj = {};
         var array = this.serializeArray();
-        var str = this.serialize();
         $(array).each(function () {
             if (serializeObj[this.name]) {
                 if ($.isArray(serializeObj[this.name])) {
@@ -155,7 +133,7 @@ function dateFormatYMD(data) {
             supportCheckbox: false,    //是否显示复选框
             supportSorting: false,     //是否支持排序
             supportDrag: false,        //是否支持拖拽
-            height: '300px',
+            height: "90%",
             ajax_type: 'GET',
             dataKey: 'dataList',
             totalsKey: 'total',
