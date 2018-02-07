@@ -7,7 +7,6 @@
     <meta name="renderer" content="webkit">
     <title>微信账户列表</title>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
-    <link href="css/select.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="grid/css/GridManager.css">
 </head>
 <body>
@@ -59,7 +58,6 @@
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="grid/js/GridManager.js"></script>
-<script type="text/javascript" src="js/select-ui.min.js"></script>
 <script type="text/javascript" src="js/common.js"></script>
 <script type="text/javascript">
 
@@ -69,9 +67,6 @@
             $("form").reset();
         });
         userList();
-        $("#user").uedSelect({
-            width : 167
-        });
         $("#grid").grid({
             ajax_url: contextPath + '/web/account/list.web',
             columnData: [{
