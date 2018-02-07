@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge | chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>个人数据查看</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .dfinput {
+            width: 80px;
+            margin: 3px;
+        }
+        .toggle_type {
+            border: solid 1px #d7e4ea;
+        }
+        .display_type {
+            float: right;
+            display: inline;
+        }
+        .sel {
+            background: #ececec;
+        }
+        .display_type img {
+            margin: 1px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="formbody">
+    <form id="search">
+        <ul class="seachform">
+            <li>
+                <label>日期范围</label>
+                <input id="start" name="startTime" class="dfinput"/> ~ <input id="end" name="endTime" class="dfinput"/>
+            </li>
+            <li><label>&nbsp;</label><input type="button" class="scbtn" value="查询" onclick="doSearch()"/></li>
+            <li class="toggle_type"><div class="display_type sel"><img id="list" src="images/list.png"></div>&nbsp;&nbsp;<div class="display_type"><img id="line" src="images/line.png"></div></li>
+        </ul>
+    </form>
+</div>
+
+<table id="data_table" class="tablelist">
+    <thead>
+    <tr>
+        <th>日期</th>
+        <th>使用人</th>
+        <th>微信名字</th>
+        <th>粉丝数量</th>
+        <th>订单数量</th>
+        <th>成交预估（元）</th>
+        <th>结算预估（元）</th>
+        <th>新增粉丝</th>
+        <th>新增订单</th>
+        <th>订单与粉丝比</th>
+        <th>单粉金额（元）</th>
+        <th>平均单笔订单金额（元）</th>
+    </tr>
+    </thead>
+</table>
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<script type="text/javascript" src="laydate/laydate.js"></script>
+<script type="text/javascript" src="js/bignumber.min.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        laydate.render({
+            elem: '#start',
+            showBottom: false,
+            theme: 'grid',
+            max: new Date().format('YYYY-MM-DD')
+        });
+
+        laydate.render({
+            elem: '#end',
+            showBottom: false,
+            theme: 'grid',
+            max: new Date().format('YYYY-MM-DD')
+        });
+
+        $("#list").click(function () {
+            $("#line").parent().removeClass("sel");
+            $(this).parent().addClass("sel");
+        });
+        $("#line").click(function () {
+            $("#list").parent().removeClass("sel");
+            $(this).parent().addClass("sel");
+        });
+
+    });
+
+    function accountList(userId) {
+        $.ajax({
+            url: contextPath + "/web/account/getAccountByUser.web",
+            type: "GET",
+            data: {"userId": userId},
+            success: function (result) {
+                if (result.status == SUCCESS) {
+                    var accountList = result.body;
+                    var select = $("#account");
+                    $("#account option:not(:first)").remove();
+                    select.find("option[value='']").attr("selected",true);
+                    for (var i = 0 ; i < accountList.length ; i++) {
+                        var op = $("<option></option>");
+                        op.attr("value", accountList[i].id);
+                        op.html(accountList[i].accountName);
+                        select.append(op);
+                    }
+                }
+            }
+        });
+    }
+
+    var _data = {
+        "id": 0,
+        "recordDate": "",
+        "name": "",
+        "accountName": "",
+        "fansNum": 0,
+        "orderNum": 0,
+        "dealNum": 0,
+        "settleNum": 0
+    };
+
+    function doSearch() {
+        $.ajax({
+            url: contextPath + "/web/data/personal.web",
+            type: "GET",
+            data: {"startTime": ($("#start").val() + " 00:00:00"), "endTime": ($("#end").val() + " 00:00:00")},
+            success: function (result) {
+                $("#data_table tr:not(:first)").remove();
+                
+                if (result.status == SUCCESS) {
+                    var data = result.body;
+                    if(JSON.stringify(data) == '{}') {
+                        alert("暂无数据");
+                        return;
+                    }
+
+                    var table = $("#data_table");
+                    var duration = $("#start").val() + " 至 " + $("#end").val();
+                    var totalNum = 0;
+                    var totalFans = new BigNumber(0), totalOrder = new BigNumber(0), totalDeal = new BigNumber(0), totalSettle = new BigNumber(0);
+                    var totalDeltaFans = new BigNumber(0), totalDeltaOrder = new BigNumber(0);
+                    var total1 = new BigNumber(0), total2 = new BigNumber(0), total3 = new BigNumber(0);
+                    for (var index in data) {
+                        if(index > 0) {
+                            var oldData = data[index - 1];
+                            var dataList = data[index];
+                            var subTotalFans = new BigNumber(0), subTotalOrder = new BigNumber(0), subTotalDeal = new BigNumber(0), subTotalSettle = new BigNumber(0);
+                            var subTotalDeltaFans = new BigNumber(0), subTotalDeltaOrder = new BigNumber(0);
+                            var average1 = new BigNumber(0), average2 = new BigNumber(0), average3 = new BigNumber(0);
+
+                            for (var i = 0; i < dataList.length; i++) {
+
+                                var prev = oldData[i];
+                                if (typeof(oldData[i]) == "undefined"){
+                                    prev = _data;
+                                }
+                                var curr = dataList[i];
+                                if (typeof(dataList[i]) == "undefined"){
+                                    curr = _data;
+                                }
+                                subTotalFans = subTotalFans.plus(curr.fansNum);
+                                subTotalOrder = subTotalOrder.plus(curr.orderNum);
+                                subTotalDeal = subTotalDeal.plus(curr.dealNum);
+                                subTotalSettle = subTotalSettle.plus(curr.settleNum);
+                                var deltaFans = curr.fansNum - prev.fansNum; //新增粉丝数
+                                subTotalDeltaFans = subTotalDeltaFans.plus(deltaFans);//新增粉丝总数
+
+                                var deltaOrder = curr.orderNum - prev.orderNum; //新增订单数量
+                                subTotalDeltaOrder = subTotalDeltaOrder.plus(deltaOrder);//新增订单总数
+
+                                var delta1 = new BigNumber(curr.orderNum).dividedBy(curr.fansNum);
+                                average1 = average1.plus(delta1); //平均订单粉丝比
+
+                                var delta2 = new BigNumber(curr.dealNum).dividedBy(curr.fansNum);
+                                average2 = average2.plus(delta2); //平均单粉金额
+
+                                var delta3 = new BigNumber(curr.dealNum).dividedBy(curr.orderNum);
+                                average3 = average3.plus(delta3); //平均订单金额
+
+                                var row = $("<tr>");
+                                row.append("<td>" + curr.recordDate + "</td>");
+                                row.append("<td>" + curr.name + "</td>");
+                                row.append("<td>" + curr.accountName + "</td>");
+                                row.append("<td>" + curr.fansNum + "</td>");
+                                row.append("<td>" + curr.orderNum + "</td>");
+                                row.append("<td>" + curr.dealNum + "</td>");
+                                row.append("<td>" + curr.settleNum + "</td>");
+                                row.append("<td>" + deltaFans + "</td>");
+                                row.append("<td>" + deltaOrder + "</td>");
+                                row.append("<td>" + delta1.round(3).toString() + "</td>");
+                                row.append("<td>" + delta2.round(2).toString() + "</td>");
+                                row.append("<td>" + delta3.round(2).toString() + "</td>");
+                                table.append(row);
+                            }
+                            var td = $("<td colspan='12'【小计】&nbsp;&nbsp;&nbsp;&nbsp;</td>");
+                            td.append("粉丝数量：" + subTotalFans.toString());
+                            td.append("&nbsp;&nbsp;");
+                            td.append("订单数量：" + subTotalOrder.toString());
+                            td.append("&nbsp;&nbsp;");
+                            td.append("成交预估：" + subTotalDeal.toString());
+                            td.append("&nbsp;&nbsp;");
+                            td.append("结算预估：" + subTotalSettle.toString());
+                            td.append("&nbsp;&nbsp;");
+                            td.append("新增粉丝：" + subTotalDeltaFans.toString());
+                            td.append("&nbsp;&nbsp;");
+                            td.append("新增订单：" + subTotalDeltaOrder.toString());
+                            td.append("&nbsp;&nbsp;");
+                            td.append("平均订单粉丝比：" + new BigNumber(average1).dividedBy(dataList.length).round(3).toString());
+                            td.append("&nbsp;&nbsp;");
+                            td.append("平均单粉金额：" + new BigNumber(average2).dividedBy(dataList.length).round(2).toString());
+                            td.append("&nbsp;&nbsp;");
+                            td.append("平均订单金额：" + new BigNumber(average3).dividedBy(dataList.length).round(2).toString());
+                            var r = $("<tr>");
+                            r.css("background", "#eca8a9");
+                            r.append(td);
+                            table.append(r);
+
+
+                            totalFans = totalFans.plus(subTotalFans);
+                            totalOrder = totalOrder.plus(subTotalOrder);
+                            totalDeal = totalDeal.plus(subTotalDeal);
+                            totalSettle = totalSettle.plus(subTotalSettle);
+
+                            totalDeltaFans = totalDeltaFans.plus(subTotalDeltaFans);
+                            totalDeltaOrder = totalDeltaOrder.plus(subTotalDeltaOrder);
+
+                            total1 = total1.plus(average1);
+                            total2 = total1.plus(average2);
+                            total3 = total1.plus(average3);
+
+                            totalNum += dataList.length;
+                        }
+                    }
+                    table.append("<tr><td colspan='12'>&nbsp;</td></tr>");
+
+                    var td = $("<td colspan='12'></td>");
+                    td.append("日期：" + duration + "<br/>");
+                    td.append("【总计】&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                    td.append("粉丝数量：" + totalFans.toString());
+                    td.append("&nbsp;&nbsp;");
+                    td.append("订单数量：" + totalOrder.toString());
+                    td.append("&nbsp;&nbsp;");
+                    td.append("成交预估：" + totalDeal.toString());
+                    td.append("&nbsp;&nbsp;");
+                    td.append("结算预估：" + totalSettle.toString());
+                    td.append("&nbsp;&nbsp;");
+                    td.append("新增粉丝：" + totalDeltaFans.toString());
+                    td.append("&nbsp;&nbsp;");
+                    td.append("新增订单：" + totalDeltaOrder.toString());
+                    td.append("&nbsp;&nbsp;");
+                    td.append("平均订单粉丝比：" + new BigNumber(total1).dividedBy(totalNum).round(3).toString());
+                    td.append("&nbsp;&nbsp;");
+                    td.append("平均单粉金额：" + new BigNumber(total2).dividedBy(totalNum).round(2).toString());
+                    td.append("&nbsp;&nbsp;");
+                    td.append("平均订单金额：" + new BigNumber(total3).dividedBy(totalNum).round(2).toString());
+                    var r = $("<tr>");
+                    r.css("background", "#ece485");
+                    r.append(td);
+                    table.append(r);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
