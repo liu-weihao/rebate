@@ -65,4 +65,12 @@ public class AccountController extends BaseController {
         }
         return ResponseObj.fail();
     }
+
+    @RequestMapping(value = "/removeAccount.web", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
+    public ResponseObj removeAccount(@RequestParam(name = "accountId") Integer accountId) {
+        if (accountService.deleteAccountUser(accountId)) {
+            return ResponseObj.success();
+        }
+        return ResponseObj.fail();
+    }
 }

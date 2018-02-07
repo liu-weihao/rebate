@@ -20,10 +20,10 @@ import org.joda.time.Days;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,9 +59,22 @@ public class AccountService {
         }
     }
 
+    @Transactional
     public boolean assign(AssignForm assignForm) {
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(assignForm, userAccount);
+        Example ex = new Example(UserAccount.class);
+        ex.createCriteria().andEqualTo("accountId", assignForm.getAccountId());
+        List<UserAccount> userAccounts = userAccountMapper.selectByExample(ex);
+        if(CollectionUtils.isEmpty(userAccounts)) { //账号没有关联过
+            return userAccountMapper.insertSelective(userAccount) == 1;
+        }
+        if(userAccounts.size() == 1) {
+            UserAccount account = userAccounts.get(0);
+            return changeAccountUser(account.getId(), userAccount.getUserId(), userAccount.getAccountId(), userAccount.getType());
+        }
+        //关联了多个，属于异常情况，先删除关联，再添加一个关联记录
+        userAccountMapper.deleteByExample(ex);
         return userAccountMapper.insertSelective(userAccount) == 1;
     }
 
@@ -108,16 +121,23 @@ public class AccountService {
         return accountMapper.selectByExample(ex);
     }
 
-    public boolean changeAccountUser(Integer id, String userId, Integer accountId) {
+    public boolean changeAccountUser(Integer id, String userId, Integer accountId, String type) {
         if (id == null || accountId == null || StringUtils.isBlank(userId)) return false;
         UserAccount userAccount = userAccountMapper.selectByPrimaryKey(id);
         if (userAccount == null) return false;
         userAccount.setUserId(userId);
         userAccount.setAccountId(accountId);
+        userAccount.setType(type);
         return userAccountMapper.updateByPrimaryKeySelective(userAccount) == 1;
     }
 
-    public boolean deleteAccountUser(Integer id) {
-        return id != null && userAccountMapper.deleteByPrimaryKey(id) == 1;
+    @Transactional
+    public boolean deleteAccountUser(Integer accountId) {
+
+        accountMapper.deleteByPrimaryKey(accountId);
+        Example ex = new Example(UserAccount.class);
+        ex.createCriteria().andEqualTo("accountId", accountId);
+        userAccountMapper.deleteByExample(ex);
+        return true;
     }
 }

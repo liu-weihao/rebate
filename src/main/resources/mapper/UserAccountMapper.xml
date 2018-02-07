@@ -42,7 +42,7 @@
         FROM `account` AS a
             LEFT JOIN user_account AS ua ON ua.account_id = a.id
             LEFT JOIN user_info AS u ON ua.user_id = u.user_id
-        ORDER BY a.union_name ASC, ua.id DESC
+        ORDER BY a.union_name ASC, ua.type ASC
     </select>
 
     <select id="getAccountList" parameterType="map" resultMap="UserAccountModel">

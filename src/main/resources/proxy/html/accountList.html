@@ -130,9 +130,8 @@
                 align: 'center',
                 template: function (action, rowObject) {
                     var h = "<a style='color:#337ab7;' href='javascript:;' onclick='showEditPanel(" + JSON.stringify(rowObject) + ")'>编辑</a> &nbsp;&nbsp;";
-                    if(!rowObject.userId) {
-                        h = h + "<a style='color:#337ab7;' href='javascript:;' onclick='showAssignPanel(" + JSON.stringify(rowObject) + ")'>分配</a>";
-                    }
+                    h = h + "<a style='color:#337ab7;' href='javascript:;' onclick='showAssignPanel(" + JSON.stringify(rowObject) + ")'>分配</a> &nbsp;&nbsp;";
+                    h = h + "<a style='color:#337ab7;' href='javascript:;' onclick='removeAccount(" + rowObject.accountId + ")'>删除</a>";
                     return h;
                 }
             }]
@@ -153,6 +152,25 @@
         $("#aName").val(account.accountName);
     }
 
+    function removeAccount(accountId) {
+
+        if(confirm("您确认要删除该账户及其关联的所有数据吗？")){
+
+            $.ajax({
+                url: contextPath + "/web/account/removeAccount.web",
+                type: "POST",
+                data: {"accountId": accountId},
+                success: function (result) {
+                    if (result.status == SUCCESS) {
+                        $("#grid").GM('refreshGrid', false);
+                    } else {
+                        alert(result.message);
+                    }
+                }
+            })
+        }
+    }
+    
     function userList() {
         $.ajax({
             url: contextPath + "/web/user/all.web",
@@ -184,7 +202,7 @@
                     alert("分配成功");
                     $("#grid").GM('refreshGrid', false);
                     $(".tip").fadeOut(100);
-                    $("form").reset();
+                    $("#assign").reset();
                 }
             }
         });
@@ -201,7 +219,7 @@
                     alert("编辑成功");
                     $("#grid").GM('refreshGrid', false);
                     $(".tip").fadeOut(100);
-                    $("form")[0].reset();
+                    $("#account").reset();
                 }
             }
         });
