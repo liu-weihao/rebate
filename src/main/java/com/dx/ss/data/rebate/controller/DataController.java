@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -26,6 +27,12 @@ public class DataController extends BaseController {
 
     @RequestMapping(value = "/list.web", produces = {"application/json;charset=UTF-8"})
     public ResponseObj getDataRecordList(DataRecordSearch search) {
+        return ResponseObj.success(dataRecordService.getDataRecordList(search));
+    }
+
+    @RequestMapping(value = "/personal.web", produces = {"application/json;charset=UTF-8"})
+    public ResponseObj personal(HttpServletRequest request, DataRecordSearch search) {
+        search.setUserId(super.userId(request));
         return ResponseObj.success(dataRecordService.getDataRecordList(search));
     }
 
