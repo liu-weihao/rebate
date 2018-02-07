@@ -48,7 +48,7 @@
     }
     function logout() {
         $.ajax({
-           url: contextPath + "/web/user/logout.web",
+           url: contextPath + "/web/user/logout.do",
            type: "POST",
            success: function () {
                window.top.location.href = contextPath + "/login.html";

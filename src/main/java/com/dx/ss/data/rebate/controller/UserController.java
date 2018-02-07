@@ -99,7 +99,7 @@ public class UserController extends BaseController {
         return ResponseObj.fail();
     }
 
-    @RequestMapping(value = "/logout.web", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/logout.do", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
     public ResponseObj logout(HttpServletRequest request) {
         request.getSession().removeAttribute(ViewConstants.LOGIN_TICKET_USER);
         return ResponseObj.success();

@@ -103,27 +103,37 @@
                     var menuTable = $("#menu_table");
                     for (var i = 0; i < menuList.length; i++) {
                         var row = $("<tr>");
-                        row.append("<td><input id='menu_" + menuList[i].id + "' name='menuId' value='" + menuList[i].id + "' type='checkbox'/>" + menuList[i].menuName + "</td>");
+                        row.append("<td><input id='menu_" + menuList[i].id + "' name='menuId' value='" + menuList[i].id + "' type='checkbox' onchange='parentCheck(this.id)'/>" + menuList[i].menuName + "</td>");
                         var childList = menuList[i].childList;
                         var td = $("<td>");
                         for (var j = 0; j < childList.length; j++) {
-                            td.append("<input id='menu_" + menuList[i].id + "_" + childList[j].id + "' name='menuId' value='" + childList[j].id + "' type='checkbox'/>" + childList[j].menuName);
+                            td.append("<input id='menu_" + menuList[i].id + "_" + childList[j].id + "' name='menuId' value='" + childList[j].id + "' type='checkbox' onchange='childCheck(this.id)'/>" + childList[j].menuName);
                         }
                         row.append(td);
                         menuTable.append(row);
                     }
-                    var chkbox = $("input[id^='menu_']");
-
-                    $.each(rows, function (index, row) {
-                        var chkbox = $(row).find("input:checkbox");
-
-                        $(chkbox[0]).change(function () {
-                            chkbox.attr("checked", $(this).is(":checked"))
-                        });
-                    });
                 }
             }
         });
+    }
+
+    function parentCheck(id) {
+        var chk = $("#" + id);
+        if(!chk.is(":checked")) {
+            $("input[id^='"+id+"']").prop("checked", false);
+        }
+    }
+
+    function childCheck(id) {
+        var parentId = id.substring(0, id.lastIndexOf("_"));
+        var num = 0;
+        var children = $("input[id^='" + parentId + "']");
+        for(var i = 1 ; i < children.length; i++) {
+            if($(children[i]).is(":checked")) {
+                num++;
+            }
+        }
+        $("#" + parentId).prop("checked", num > 0);
     }
 
     function menuList() {
@@ -133,12 +143,13 @@
             data: {"roleId": $("#roleId").val()},
             success: function (result) {
                 if (result.status == SUCCESS) {
+                    $("input:checkbox").prop("checked", false);
                     var menuList = result.body;
                     for (var i = 0; i < menuList.length; i++) {
-                        $("#" + menuList[i].id).attr("checked", true);
+                        $("#menu_" + menuList[i].id).prop("checked", true);
                         var childList = menuList[i].childList;
                         for (var j = 0; j < childList.length; j++) {
-                            $("#" + childList[j].id).attr("checked", true);
+                            $("#menu_" + menuList[i].id + "_" + childList[j].id).prop("checked", true);
                         }
                     }
                 }
