@@ -12,6 +12,9 @@
             width: 80px;
             margin: 3px;
         }
+        .solid_bottom {
+            border-top: solid 4px #C7C7C7;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +99,8 @@
         var table = $("#data_table");
         $("#data_table tr:not(:first)").remove();
         var index = 1, rowIndex = 1;
+        if(dataList.length <= 0) return;
+        var unionName = dataList[0].unionName;
         for (var i = 0; i < dataList.length; i++) {
             var row = $("<tr>");
             row.attr("id", dataList[i].id | 0);
@@ -111,12 +116,16 @@
                 row.append("<td><input name='dealNum' class='dfinput' value='" + (dataList[i].dealNum | 0) + "'></td>");
                 row.append("<td><input name='settleNum' class='dfinput' value='" + (dataList[i].settleNum | 0) + "'></td>");
                 row.append("<td><p><a href='javascript:;' onclick='save(" + rowIndex + ")'>保存</a>&nbsp;&nbsp;<a href='javascript:;' onclick='clearData(" + rowIndex + ")'>清空</a></p></td>");
+                if(dataList[i].unionName != unionName) {
+                    row.find("td").addClass("solid_bottom");
+                }
             } else if (i != dataList.length - 1) {
                 index = 1;
                 row.append("<td colspan='9'>&nbsp;</td>")
             }
             rowIndex++;
             table.append(row);
+            unionName = dataList[i].unionName;
         }
         $("input:text").click(function () {
             $(this).select();
